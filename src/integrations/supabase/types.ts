@@ -14,16 +14,172 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      coach_athletes: {
+        Row: {
+          athlete_id: string
+          coach_id: string
+          created_at: string
+          id: string
+        }
+        Insert: {
+          athlete_id: string
+          coach_id: string
+          created_at?: string
+          id?: string
+        }
+        Update: {
+          athlete_id?: string
+          coach_id?: string
+          created_at?: string
+          id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          full_name: string
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          full_name?: string
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          full_name?: string
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      training_reports: {
+        Row: {
+          athlete_id: string
+          coach_id: string
+          created_at: string
+          id: string
+          improvements: string | null
+          intensity_score: number | null
+          mental_observations: string | null
+          objective: string
+          strengths: string | null
+          technical_score: number | null
+        }
+        Insert: {
+          athlete_id: string
+          coach_id: string
+          created_at?: string
+          id?: string
+          improvements?: string | null
+          intensity_score?: number | null
+          mental_observations?: string | null
+          objective: string
+          strengths?: string | null
+          technical_score?: number | null
+        }
+        Update: {
+          athlete_id?: string
+          coach_id?: string
+          created_at?: string
+          id?: string
+          improvements?: string | null
+          intensity_score?: number | null
+          mental_observations?: string | null
+          objective?: string
+          strengths?: string | null
+          technical_score?: number | null
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      weekly_questionnaires: {
+        Row: {
+          confidence: number
+          created_at: string
+          fatigue: number
+          id: string
+          minutes_played: number
+          motivation: number
+          muscle_pain: number
+          player_id: string
+          sleep_quality: number
+          week_start: string
+        }
+        Insert: {
+          confidence: number
+          created_at?: string
+          fatigue: number
+          id?: string
+          minutes_played?: number
+          motivation: number
+          muscle_pain: number
+          player_id: string
+          sleep_quality: number
+          week_start: string
+        }
+        Update: {
+          confidence?: number
+          created_at?: string
+          fatigue?: number
+          id?: string
+          minutes_played?: number
+          motivation?: number
+          muscle_pain?: number
+          player_id?: string
+          sleep_quality?: number
+          week_start?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      is_coach_of_athlete: {
+        Args: { _athlete_id: string; _coach_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "player" | "coach"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +306,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["player", "coach"],
+    },
   },
 } as const
