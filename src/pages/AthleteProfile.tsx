@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Navigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import Layout from "@/components/Layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Navigate } from "react-router-dom";
 import { format } from "date-fns";
 import { pt } from "date-fns/locale";
 
@@ -16,11 +15,9 @@ const AthleteProfile = () => {
   const [reports, setReports] = useState<any[]>([]);
   const [questionnaires, setQuestionnaires] = useState<any[]>([]);
 
-  if (role !== "coach") return <Navigate to="/dashboard" replace />;
-
   useEffect(() => {
     if (!athleteId) return;
-    const fetch = async () => {
+    const fetchAll = async () => {
       const [profileRes, reportsRes, questRes] = await Promise.all([
         supabase.from("profiles").select("*").eq("user_id", athleteId).maybeSingle(),
         supabase.from("training_reports").select("*").eq("athlete_id", athleteId).order("created_at", { ascending: false }).limit(10),
@@ -30,8 +27,10 @@ const AthleteProfile = () => {
       setReports(reportsRes.data || []);
       setQuestionnaires(questRes.data || []);
     };
-    fetch();
+    fetchAll();
   }, [athleteId]);
+
+  if (role !== "coach") return <Navigate to="/dashboard" replace />;
 
   return (
     <Layout>
@@ -41,7 +40,6 @@ const AthleteProfile = () => {
           <p className="text-muted-foreground mt-1">Perfil completo do atleta</p>
         </div>
 
-        {/* Questionnaires */}
         <Card>
           <CardHeader>
             <CardTitle className="text-lg">Questionários Semanais</CardTitle>
@@ -71,7 +69,6 @@ const AthleteProfile = () => {
           </CardContent>
         </Card>
 
-        {/* Reports */}
         <Card>
           <CardHeader>
             <CardTitle className="text-lg">Relatórios de Treino</CardTitle>

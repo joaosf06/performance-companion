@@ -22,8 +22,6 @@ const Athletes = () => {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
 
-  if (role !== "coach") return <Navigate to="/dashboard" replace />;
-
   const fetchAthletes = async () => {
     if (!user) return;
     const { data: links } = await supabase
@@ -52,26 +50,17 @@ const Athletes = () => {
     fetchAthletes();
   }, [user]);
 
+  if (role !== "coach") return <Navigate to="/dashboard" replace />;
+
   const addAthlete = async () => {
     if (!email.trim() || !user) return;
     setLoading(true);
     try {
-      // Find user by email from profiles - we need to look up via auth
-      // Since we can't query auth.users, we'll use a workaround:
-      // The coach needs the athlete's user_id. For now, we'll search by email in metadata.
-      // A better approach: athlete shares their ID or email-based lookup via edge function.
-      // Simplified: use email to find via profiles (we'd need email in profiles).
-      // For MVP: coach adds by athlete user_id directly.
-      
-      // Let's try to find the user - this won't work directly. 
-      // Instead, let's add by user ID for now.
       const athleteId = email.trim();
-      
       const { error } = await supabase.from("coach_athletes").insert({
         coach_id: user.id,
         athlete_id: athleteId,
       });
-
       if (error) throw error;
       toast.success("Atleta adicionado!");
       setEmail("");
@@ -101,7 +90,6 @@ const Athletes = () => {
           <p className="text-muted-foreground mt-1">Adiciona e gere os teus atletas.</p>
         </div>
 
-        {/* Add athlete */}
         <Card>
           <CardHeader>
             <CardTitle className="text-lg">Adicionar Atleta</CardTitle>
@@ -125,7 +113,6 @@ const Athletes = () => {
           </CardContent>
         </Card>
 
-        {/* Athletes list */}
         <Card>
           <CardHeader>
             <CardTitle className="text-lg">Os Teus Atletas ({athletes.length})</CardTitle>

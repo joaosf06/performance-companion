@@ -18,16 +18,12 @@ const Questionnaire = () => {
   const [existing, setExisting] = useState<any>(null);
   const [history, setHistory] = useState<any[]>([]);
   const [submitting, setSubmitting] = useState(false);
-
-  // Form
   const [fatigue, setFatigue] = useState([5]);
   const [musclePain, setMusclePain] = useState([5]);
   const [sleepQuality, setSleepQuality] = useState([5]);
   const [confidence, setConfidence] = useState([5]);
   const [motivation, setMotivation] = useState([5]);
   const [minutesPlayed, setMinutesPlayed] = useState(0);
-
-  if (role !== "player") return <Navigate to="/dashboard" replace />;
 
   const weekStart = startOfWeek(new Date(), { weekStartsOn: 1 });
   const weekStartStr = format(weekStart, "yyyy-MM-dd");
@@ -39,7 +35,6 @@ const Questionnaire = () => {
 
   const fetchData = async () => {
     if (!user) return;
-    // Current week
     const { data: current } = await supabase
       .from("weekly_questionnaires")
       .select("*")
@@ -48,7 +43,6 @@ const Questionnaire = () => {
       .maybeSingle();
     setExisting(current);
 
-    // History
     const { data: hist } = await supabase
       .from("weekly_questionnaires")
       .select("*")
@@ -57,6 +51,8 @@ const Questionnaire = () => {
       .limit(10);
     setHistory(hist || []);
   };
+
+  if (role !== "player") return <Navigate to="/dashboard" replace />;
 
   const submit = async () => {
     if (!user) return;
@@ -169,7 +165,6 @@ const Questionnaire = () => {
           </Card>
         )}
 
-        {/* History */}
         {history.length > 0 && (
           <Card>
             <CardHeader>
