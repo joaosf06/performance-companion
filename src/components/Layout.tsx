@@ -30,7 +30,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
       <aside className="fixed left-0 top-0 z-40 flex h-screen w-64 flex-col border-r border-border bg-card">
         <div className="flex h-16 items-center px-6 border-b border-border">
           <h1 className="text-xl font-bold tracking-tight">
-            TREINO<span className="text-primary">PRO</span>
+            PRIME<span className="text-primary">11</span>
           </h1>
         </div>
 
