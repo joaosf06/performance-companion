@@ -1,17 +1,7 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
-import { motion } from "framer-motion";
 import { Target, Users, TrendingUp, Brain, ChevronRight, Star, Shield, Zap } from "lucide-react";
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 30 },
-  visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: { delay: i * 0.15, duration: 0.6, ease: "easeOut" as const },
-  }),
-};
 
 const Index = () => {
   const { user } = useAuth();
@@ -43,52 +33,26 @@ const Index = () => {
 
       {/* Hero */}
       <section className="relative flex min-h-screen items-center justify-center overflow-hidden px-6 pt-16">
-        {/* Background glow */}
         <div className="absolute inset-0 overflow-hidden">
           <div className="absolute left-1/2 top-1/3 h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/8 blur-[120px]" />
         </div>
 
-        <div className="relative z-10 mx-auto max-w-4xl text-center">
-          <motion.div
-            initial="hidden"
-            animate="visible"
-            variants={fadeUp}
-            custom={0}
-          >
-            <span className="mb-6 inline-block rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-xs font-medium uppercase tracking-widest text-primary">
-              Treino Individual de Elite
-            </span>
-          </motion.div>
+        <div className="relative z-10 mx-auto max-w-4xl text-center animate-fade-in">
+          <span className="mb-6 inline-block rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-xs font-medium uppercase tracking-widest text-primary">
+            Treino Individual de Elite
+          </span>
 
-          <motion.h1
-            className="text-4xl font-bold leading-[1.1] tracking-tight sm:text-6xl lg:text-7xl"
-            initial="hidden"
-            animate="visible"
-            variants={fadeUp}
-            custom={1}
-          >
+          <h1 className="text-4xl font-bold leading-[1.1] tracking-tight sm:text-6xl lg:text-7xl">
             O teu rendimento.{" "}
             <span className="text-primary">Sem limites.</span>
-          </motion.h1>
+          </h1>
 
-          <motion.p
-            className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground sm:text-xl"
-            initial="hidden"
-            animate="visible"
-            variants={fadeUp}
-            custom={2}
-          >
+          <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground sm:text-xl">
             A Prime11 conecta jogadores e treinadores numa plataforma de acompanhamento personalizado. 
             Monitoriza, evolui e atinge o teu máximo potencial.
-          </motion.p>
+          </p>
 
-          <motion.div
-            className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center"
-            initial="hidden"
-            animate="visible"
-            variants={fadeUp}
-            custom={3}
-          >
+          <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
             <Link to="/auth">
               <Button size="lg" className="gap-2 text-base px-8">
                 Começar agora <ChevronRight className="h-4 w-4" />
@@ -99,16 +63,10 @@ const Index = () => {
                 Saber mais
               </Button>
             </a>
-          </motion.div>
+          </div>
 
           {/* Stats */}
-          <motion.div
-            className="mx-auto mt-20 grid max-w-md grid-cols-3 gap-8"
-            initial="hidden"
-            animate="visible"
-            variants={fadeUp}
-            custom={4}
-          >
+          <div className="mx-auto mt-20 grid max-w-md grid-cols-3 gap-8">
             {[
               { value: "500+", label: "Atletas" },
               { value: "50+", label: "Treinadores" },
@@ -119,21 +77,14 @@ const Index = () => {
                 <p className="mt-1 text-xs text-muted-foreground uppercase tracking-wider">{stat.label}</p>
               </div>
             ))}
-          </motion.div>
+          </div>
         </div>
       </section>
 
       {/* Sobre */}
       <section id="sobre" className="border-t border-border/50 py-24 px-6">
         <div className="mx-auto max-w-6xl">
-          <motion.div
-            className="mx-auto max-w-2xl text-center"
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-100px" }}
-            variants={fadeUp}
-            custom={0}
-          >
+          <div className="mx-auto max-w-2xl text-center">
             <span className="text-xs font-medium uppercase tracking-widest text-primary">Quem somos</span>
             <h2 className="mt-4 text-3xl font-bold tracking-tight sm:text-4xl">
               Treinadores e jogadores, juntos.
@@ -142,7 +93,7 @@ const Index = () => {
               A Prime11 nasceu da necessidade de profissionalizar o acompanhamento individual no futebol. 
               Acreditamos que cada jogador merece um plano personalizado, dados concretos e comunicação direta com o seu treinador.
             </p>
-          </motion.div>
+          </div>
 
           <div className="mt-16 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
             {[
@@ -161,22 +112,17 @@ const Index = () => {
                 title: "Valores",
                 description: "Transparência, excelência, personalização e compromisso com a evolução de cada atleta.",
               },
-            ].map((item, i) => (
-              <motion.div
+            ].map((item) => (
+              <div
                 key={item.title}
                 className="group rounded-xl border border-border/50 bg-card p-8 transition-all hover:border-primary/30"
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, margin: "-50px" }}
-                variants={fadeUp}
-                custom={i + 1}
               >
                 <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-lg bg-primary/10">
                   <item.icon className="h-5 w-5 text-primary" />
                 </div>
                 <h3 className="text-lg font-semibold text-foreground">{item.title}</h3>
                 <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{item.description}</p>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>
@@ -185,14 +131,7 @@ const Index = () => {
       {/* Serviços */}
       <section id="servicos" className="border-t border-border/50 bg-card/50 py-24 px-6">
         <div className="mx-auto max-w-6xl">
-          <motion.div
-            className="mx-auto max-w-2xl text-center"
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-100px" }}
-            variants={fadeUp}
-            custom={0}
-          >
+          <div className="mx-auto max-w-2xl text-center">
             <span className="text-xs font-medium uppercase tracking-widest text-primary">Serviços</span>
             <h2 className="mt-4 text-3xl font-bold tracking-tight sm:text-4xl">
               O que oferecemos
@@ -200,7 +139,7 @@ const Index = () => {
             <p className="mt-4 text-muted-foreground text-lg">
               Ferramentas profissionais para maximizar o potencial de cada atleta.
             </p>
-          </motion.div>
+          </div>
 
           <div className="mt-16 grid gap-6 sm:grid-cols-2">
             {[
@@ -224,22 +163,17 @@ const Index = () => {
                 title: "Dashboard Personalizado",
                 description: "Cada utilizador tem um painel adaptado ao seu perfil. Jogadores veem os seus dados; treinadores gerem a sua equipa.",
               },
-            ].map((item, i) => (
-              <motion.div
+            ].map((item) => (
+              <div
                 key={item.title}
                 className="rounded-xl border border-border/50 bg-background p-8 transition-all hover:border-primary/30"
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, margin: "-50px" }}
-                variants={fadeUp}
-                custom={i + 1}
               >
                 <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-lg bg-primary/10">
                   <item.icon className="h-5 w-5 text-primary" />
                 </div>
                 <h3 className="text-lg font-semibold text-foreground">{item.title}</h3>
                 <p className="mt-3 text-sm text-muted-foreground leading-relaxed">{item.description}</p>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>
@@ -248,14 +182,7 @@ const Index = () => {
       {/* Equipa */}
       <section id="equipa" className="border-t border-border/50 py-24 px-6">
         <div className="mx-auto max-w-6xl">
-          <motion.div
-            className="mx-auto max-w-2xl text-center"
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-100px" }}
-            variants={fadeUp}
-            custom={0}
-          >
+          <div className="mx-auto max-w-2xl text-center">
             <span className="text-xs font-medium uppercase tracking-widest text-primary">Equipa</span>
             <h2 className="mt-4 text-3xl font-bold tracking-tight sm:text-4xl">
               Quem está por trás da Prime11
@@ -263,36 +190,22 @@ const Index = () => {
             <p className="mt-4 text-muted-foreground text-lg">
               Uma equipa apaixonada por futebol e tecnologia, comprometida em transformar o treino individual.
             </p>
-          </motion.div>
+          </div>
 
-          <motion.div
-            className="mt-16 mx-auto max-w-3xl rounded-xl border border-border/50 bg-card p-10 text-center"
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-50px" }}
-            variants={fadeUp}
-            custom={1}
-          >
+          <div className="mt-16 mx-auto max-w-3xl rounded-xl border border-border/50 bg-card p-10 text-center">
             <p className="text-muted-foreground leading-relaxed text-base">
               A Prime11 foi fundada por profissionais do futebol e da tecnologia que identificaram 
               uma lacuna no mercado: a falta de ferramentas digitais profissionais para o treino individual. 
               A nossa missão é dar a cada jogador — independentemente do nível — acesso a um acompanhamento 
               de excelência, com dados, relatórios e comunicação contínua com o treinador.
             </p>
-          </motion.div>
+          </div>
         </div>
       </section>
 
       {/* CTA Final */}
       <section className="border-t border-border/50 bg-card/50 py-24 px-6">
-        <motion.div
-          className="mx-auto max-w-2xl text-center"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
-          variants={fadeUp}
-          custom={0}
-        >
+        <div className="mx-auto max-w-2xl text-center">
           <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
             Pronto para evoluir?
           </h2>
@@ -306,7 +219,7 @@ const Index = () => {
               </Button>
             </Link>
           </div>
-        </motion.div>
+        </div>
       </section>
 
       {/* Footer */}
