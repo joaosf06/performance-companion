@@ -13,6 +13,7 @@ import Questionnaire from "./pages/Questionnaire";
 import AthleteProfile from "./pages/AthleteProfile";
 import NotFound from "./pages/NotFound";
 import FreeTrial from "./pages/FreeTrial";
+import Chat from "./pages/Chat";
 
 const queryClient = new QueryClient();
 
