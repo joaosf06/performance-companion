@@ -53,16 +53,16 @@ const Index = () => {
           </p>
 
           <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-            <Link to="/auth">
+            <Link to="/treino-gratis">
               <Button size="lg" className="gap-2 text-base px-8">
-                Começar agora <ChevronRight className="h-4 w-4" />
+                Treino grátis <ChevronRight className="h-4 w-4" />
               </Button>
             </Link>
-            <a href="#sobre">
+            <Link to="/auth">
               <Button variant="outline" size="lg" className="text-base px-8">
-                Saber mais
+                Começar agora
               </Button>
-            </a>
+            </Link>
           </div>
 
           {/* Stats */}
