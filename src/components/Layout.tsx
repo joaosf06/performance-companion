@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
-import { LogOut, User, LayoutDashboard, Users, FileText, ClipboardList } from "lucide-react";
+import { LogOut, User, LayoutDashboard, Users, FileText, ClipboardList, MessageCircle } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 
 const Layout = ({ children }: { children: ReactNode }) => {
