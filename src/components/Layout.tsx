@@ -14,12 +14,14 @@ const Layout = ({ children }: { children: ReactNode }) => {
     { path: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
     { path: "/athletes", label: "Atletas", icon: Users },
     { path: "/reports", label: "Relatórios", icon: FileText },
+    { path: "/chat", label: "Mensagens", icon: MessageCircle },
   ];
 
   const playerLinks = [
     { path: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
     { path: "/reports", label: "Relatórios", icon: FileText },
     { path: "/questionnaire", label: "Questionário", icon: ClipboardList },
+    { path: "/chat", label: "Mensagens", icon: MessageCircle },
   ];
 
   const links = role === "coach" ? coachLinks : playerLinks;
