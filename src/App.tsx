@@ -57,6 +57,7 @@ const App = () => (
             <Route path="/athletes/:athleteId" element={<ProtectedRoute><AthleteProfile /></ProtectedRoute>} />
             <Route path="/reports" element={<ProtectedRoute><Reports /></ProtectedRoute>} />
             <Route path="/questionnaire" element={<ProtectedRoute><Questionnaire /></ProtectedRoute>} />
+            <Route path="/treino-gratis" element={<FreeTrial />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>
