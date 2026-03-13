@@ -12,6 +12,7 @@ import Reports from "./pages/Reports";
 import Questionnaire from "./pages/Questionnaire";
 import AthleteProfile from "./pages/AthleteProfile";
 import NotFound from "./pages/NotFound";
+import FreeTrial from "./pages/FreeTrial";
 
 const queryClient = new QueryClient();
 
