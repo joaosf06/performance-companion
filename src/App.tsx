@@ -13,6 +13,7 @@ import Questionnaire from "./pages/Questionnaire";
 import AthleteProfile from "./pages/AthleteProfile";
 import NotFound from "./pages/NotFound";
 import FreeTrial from "./pages/FreeTrial";
+import Chat from "./pages/Chat";
 
 const queryClient = new QueryClient();
 
@@ -57,6 +58,7 @@ const App = () => (
             <Route path="/athletes/:athleteId" element={<ProtectedRoute><AthleteProfile /></ProtectedRoute>} />
             <Route path="/reports" element={<ProtectedRoute><Reports /></ProtectedRoute>} />
             <Route path="/questionnaire" element={<ProtectedRoute><Questionnaire /></ProtectedRoute>} />
+            <Route path="/chat" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
             <Route path="/treino-gratis" element={<FreeTrial />} />
             <Route path="*" element={<NotFound />} />
           </Routes>

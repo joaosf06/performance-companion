@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
-import { LogOut, User, LayoutDashboard, Users, FileText, ClipboardList } from "lucide-react";
+import { LogOut, User, LayoutDashboard, Users, FileText, ClipboardList, MessageCircle } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 
 const Layout = ({ children }: { children: ReactNode }) => {
@@ -14,12 +14,14 @@ const Layout = ({ children }: { children: ReactNode }) => {
     { path: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
     { path: "/athletes", label: "Atletas", icon: Users },
     { path: "/reports", label: "Relatórios", icon: FileText },
+    { path: "/chat", label: "Mensagens", icon: MessageCircle },
   ];
 
   const playerLinks = [
     { path: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
     { path: "/reports", label: "Relatórios", icon: FileText },
     { path: "/questionnaire", label: "Questionário", icon: ClipboardList },
+    { path: "/chat", label: "Mensagens", icon: MessageCircle },
   ];
 
   const links = role === "coach" ? coachLinks : playerLinks;
