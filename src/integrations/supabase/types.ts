@@ -35,6 +35,51 @@ export type Database = {
         }
         Relationships: []
       }
+      free_trial_requests: {
+        Row: {
+          age: number
+          availability: string
+          club: string
+          created_at: string
+          email: string
+          full_name: string
+          id: string
+          level: string
+          notes: string | null
+          phone: string | null
+          position: string
+          preferred_foot: string
+        }
+        Insert: {
+          age: number
+          availability: string
+          club: string
+          created_at?: string
+          email: string
+          full_name: string
+          id?: string
+          level: string
+          notes?: string | null
+          phone?: string | null
+          position: string
+          preferred_foot: string
+        }
+        Update: {
+          age?: number
+          availability?: string
+          club?: string
+          created_at?: string
+          email?: string
+          full_name?: string
+          id?: string
+          level?: string
+          notes?: string | null
+          phone?: string | null
+          position?: string
+          preferred_foot?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
