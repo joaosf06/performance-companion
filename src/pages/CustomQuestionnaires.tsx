@@ -483,6 +483,18 @@ const CustomQuestionnaires = () => {
                 </div>
               ))}
             </div>
+            {/* Show attachments */}
+            {viewingQuestionnaire && (viewingQuestionnaire as any).attachments && (viewingQuestionnaire as any).attachments.length > 0 && (
+              <div className="space-y-3">
+                <Label className="text-sm font-semibold">Anexos:</Label>
+                {(viewingQuestionnaire as any).attachments.map((att: any, i: number) => (
+                  <a key={i} href={att.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 rounded-md bg-secondary p-3 hover:bg-accent transition-colors">
+                    <Paperclip className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-sm text-foreground">{att.name}</span>
+                  </a>
+                ))}
+              </div>
+            )}
             {assignments.length > 0 && (
               <div className="space-y-3 mt-4">
                 <Label className="text-sm font-semibold">Atribuído a:</Label>
