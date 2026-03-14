@@ -14,6 +14,7 @@ import AthleteProfile from "./pages/AthleteProfile";
 import NotFound from "./pages/NotFound";
 import FreeTrial from "./pages/FreeTrial";
 import Chat from "./pages/Chat";
+import CustomQuestionnaires from "./pages/CustomQuestionnaires";
 
 const queryClient = new QueryClient();
 
