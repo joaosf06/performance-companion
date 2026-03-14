@@ -65,12 +65,12 @@ const CustomQuestionnaires = () => {
   const [viewingQuestionnaire, setViewingQuestionnaire] = useState<Questionnaire | null>(null);
   const [assignments, setAssignments] = useState<any[]>([]);
 
-  if (role !== "coach") return <Navigate to="/dashboard" replace />;
-
   useEffect(() => {
     if (!user) return;
     fetchAll();
   }, [user]);
+
+  if (role !== "coach") return <Navigate to="/dashboard" replace />;
 
   const fetchAll = async () => {
     if (!user) return;
