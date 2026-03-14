@@ -338,6 +338,56 @@ const CustomQuestionnaires = () => {
                 ))}
               </div>
 
+              {/* Attachments section */}
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <Label className="text-base font-semibold">Anexos (fotos, vídeos, ficheiros)</Label>
+                  <div>
+                    <input
+                      ref={attachmentInputRef}
+                      type="file"
+                      accept="image/*,video/*,.pdf,.doc,.docx"
+                      className="hidden"
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0];
+                        if (!file || !user) return;
+                        setUploadingAttachment(true);
+                        try {
+                          const path = `${user.id}/${Date.now()}_${file.name}`;
+                          const { error: upErr } = await supabase.storage.from("questionnaire-files").upload(path, file);
+                          if (upErr) throw upErr;
+                          const { data: urlData } = supabase.storage.from("questionnaire-files").getPublicUrl(path);
+                          setAttachments((prev) => [...prev, { name: file.name, url: urlData.publicUrl, type: file.type }]);
+                        } catch (err: any) {
+                          toast.error(err.message);
+                        } finally {
+                          setUploadingAttachment(false);
+                          if (attachmentInputRef.current) attachmentInputRef.current.value = "";
+                        }
+                      }}
+                    />
+                    <Button variant="outline" size="sm" onClick={() => attachmentInputRef.current?.click()} disabled={uploadingAttachment}>
+                      <Paperclip className="mr-1 h-3 w-3" /> {uploadingAttachment ? "A carregar..." : "Anexar"}
+                    </Button>
+                  </div>
+                </div>
+                {attachments.length > 0 && (
+                  <div className="space-y-2">
+                    {attachments.map((att, i) => (
+                      <div key={i} className="flex items-center justify-between rounded-md bg-secondary p-3">
+                        <div className="flex items-center gap-2">
+                          <Paperclip className="h-4 w-4 text-muted-foreground" />
+                          <span className="text-sm text-foreground">{att.name}</span>
+                        </div>
+                        <Button variant="ghost" size="icon" onClick={() => setAttachments((prev) => prev.filter((_, idx) => idx !== i))}>
+                          <X className="h-4 w-4 text-destructive" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
               <Button onClick={createQuestionnaire} disabled={submitting} className="w-full">
                 {submitting ? "A criar..." : "Criar Questionário"}
               </Button>
