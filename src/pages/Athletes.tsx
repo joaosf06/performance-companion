@@ -124,7 +124,7 @@ const Athletes = () => {
               </Button>
             </div>
             <p className="mt-2 text-xs text-muted-foreground">
-              O atleta deve partilhar o seu ID de utilizador contigo.
+              O atleta deve partilhar o seu código de 6 dígitos contigo.
             </p>
           </CardContent>
         </Card>
