@@ -13,6 +13,7 @@ import { Navigate, Link } from "react-router-dom";
 interface Athlete {
   athlete_id: string;
   full_name: string;
+  short_id: string;
   id: string;
 }
 
