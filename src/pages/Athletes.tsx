@@ -112,9 +112,10 @@ const Athletes = () => {
           <CardContent>
             <div className="flex gap-3">
               <Input
-                placeholder="ID do atleta"
+                placeholder="Código do atleta (6 dígitos)"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                maxLength={6}
                 className="bg-background border-border text-foreground placeholder:text-muted-foreground"
               />
               <Button onClick={addAthlete} disabled={loading}>
