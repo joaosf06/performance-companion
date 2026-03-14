@@ -130,7 +130,12 @@ const CustomQuestionnaires = () => {
     try {
       const { data: q, error: qError } = await supabase
         .from("custom_questionnaires")
-        .insert({ coach_id: user.id, title: title.trim(), description: description.trim() || null })
+        .insert({
+          coach_id: user.id,
+          title: title.trim(),
+          description: description.trim() || null,
+          attachments: attachments.length > 0 ? attachments : [],
+        })
         .select()
         .single();
       if (qError) throw qError;
