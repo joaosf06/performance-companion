@@ -142,7 +142,7 @@ const Athletes = () => {
                   <div key={a.id} className="flex items-center justify-between rounded-md bg-secondary p-3">
                     <div>
                       <p className="text-sm font-medium text-foreground">{a.full_name}</p>
-                      <p className="text-xs text-muted-foreground">{a.athlete_id}</p>
+                      <p className="text-xs text-muted-foreground">#{a.short_id}</p>
                     </div>
                     <div className="flex gap-2">
                       <Link to={`/athletes/${a.athlete_id}`}>

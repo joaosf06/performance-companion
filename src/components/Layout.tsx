@@ -14,6 +14,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
     { path: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
     { path: "/athletes", label: "Atletas", icon: Users },
     { path: "/reports", label: "Relatórios", icon: FileText },
+    { path: "/custom-questionnaires", label: "Questionários", icon: ClipboardList },
     { path: "/chat", label: "Mensagens", icon: MessageCircle },
   ];
 
