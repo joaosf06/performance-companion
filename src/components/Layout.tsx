@@ -23,6 +23,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
     { path: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
     { path: "/reports", label: "Relatórios", icon: FileText },
     { path: "/questionnaire", label: "Questionário", icon: ClipboardList },
+    { path: "/library", label: "Biblioteca", icon: BookOpen },
     { path: "/chat", label: "Mensagens", icon: MessageCircle },
   ];
 
