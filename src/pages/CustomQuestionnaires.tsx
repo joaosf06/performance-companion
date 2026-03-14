@@ -64,6 +64,9 @@ const CustomQuestionnaires = () => {
   const [viewDialogOpen, setViewDialogOpen] = useState(false);
   const [viewingQuestionnaire, setViewingQuestionnaire] = useState<Questionnaire | null>(null);
   const [assignments, setAssignments] = useState<any[]>([]);
+  const [attachments, setAttachments] = useState<{ name: string; url: string; type: string }[]>([]);
+  const [uploadingAttachment, setUploadingAttachment] = useState(false);
+  const attachmentInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (!user) return;
