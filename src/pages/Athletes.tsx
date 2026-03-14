@@ -34,12 +34,13 @@ const Athletes = () => {
       const ids = links.map((l) => l.athlete_id);
       const { data: profiles } = await supabase
         .from("profiles")
-        .select("user_id, full_name")
+        .select("user_id, full_name, short_id")
         .in("user_id", ids);
 
       const merged = links.map((l) => ({
         ...l,
         full_name: profiles?.find((p) => p.user_id === l.athlete_id)?.full_name || "Sem nome",
+        short_id: profiles?.find((p) => p.user_id === l.athlete_id)?.short_id || "",
       }));
       setAthletes(merged);
     } else {
