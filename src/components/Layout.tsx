@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
-import { LogOut, User, LayoutDashboard, Users, FileText, ClipboardList, MessageCircle } from "lucide-react";
+import { LogOut, User, LayoutDashboard, Users, FileText, ClipboardList, MessageCircle, BookOpen } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 
 const Layout = ({ children }: { children: ReactNode }) => {
@@ -15,6 +15,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
     { path: "/athletes", label: "Atletas", icon: Users },
     { path: "/reports", label: "Relatórios", icon: FileText },
     { path: "/custom-questionnaires", label: "Questionários", icon: ClipboardList },
+    { path: "/library", label: "Biblioteca", icon: BookOpen },
     { path: "/chat", label: "Mensagens", icon: MessageCircle },
   ];
 
@@ -22,6 +23,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
     { path: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
     { path: "/reports", label: "Relatórios", icon: FileText },
     { path: "/questionnaire", label: "Questionário", icon: ClipboardList },
+    { path: "/library", label: "Biblioteca", icon: BookOpen },
     { path: "/chat", label: "Mensagens", icon: MessageCircle },
   ];
 

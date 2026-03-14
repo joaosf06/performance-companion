@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import Layout from "@/components/Layout";
@@ -10,10 +10,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { Navigate } from "react-router-dom";
-import { Plus, Trash2, Send, Eye, GripVertical } from "lucide-react";
+import { Plus, Trash2, Send, Eye, GripVertical, Paperclip, X } from "lucide-react";
 import { format } from "date-fns";
 import { pt } from "date-fns/locale";
 
@@ -64,6 +64,9 @@ const CustomQuestionnaires = () => {
   const [viewDialogOpen, setViewDialogOpen] = useState(false);
   const [viewingQuestionnaire, setViewingQuestionnaire] = useState<Questionnaire | null>(null);
   const [assignments, setAssignments] = useState<any[]>([]);
+  const [attachments, setAttachments] = useState<{ name: string; url: string; type: string }[]>([]);
+  const [uploadingAttachment, setUploadingAttachment] = useState(false);
+  const attachmentInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (!user) return;
@@ -127,7 +130,12 @@ const CustomQuestionnaires = () => {
     try {
       const { data: q, error: qError } = await supabase
         .from("custom_questionnaires")
-        .insert({ coach_id: user.id, title: title.trim(), description: description.trim() || null })
+        .insert({
+          coach_id: user.id,
+          title: title.trim(),
+          description: description.trim() || null,
+          attachments: attachments.length > 0 ? attachments : [],
+        })
         .select()
         .single();
       if (qError) throw qError;
@@ -150,6 +158,7 @@ const CustomQuestionnaires = () => {
       setTitle("");
       setDescription("");
       setFields([{ field_type: "text", label: "", required: false, sort_order: 0 }]);
+      setAttachments([]);
       fetchAll();
     } catch (error: any) {
       toast.error(error.message);
@@ -329,6 +338,56 @@ const CustomQuestionnaires = () => {
                 ))}
               </div>
 
+              {/* Attachments section */}
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <Label className="text-base font-semibold">Anexos (fotos, vídeos, ficheiros)</Label>
+                  <div>
+                    <input
+                      ref={attachmentInputRef}
+                      type="file"
+                      accept="image/*,video/*,.pdf,.doc,.docx"
+                      className="hidden"
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0];
+                        if (!file || !user) return;
+                        setUploadingAttachment(true);
+                        try {
+                          const path = `${user.id}/${Date.now()}_${file.name}`;
+                          const { error: upErr } = await supabase.storage.from("questionnaire-files").upload(path, file);
+                          if (upErr) throw upErr;
+                          const { data: urlData } = supabase.storage.from("questionnaire-files").getPublicUrl(path);
+                          setAttachments((prev) => [...prev, { name: file.name, url: urlData.publicUrl, type: file.type }]);
+                        } catch (err: any) {
+                          toast.error(err.message);
+                        } finally {
+                          setUploadingAttachment(false);
+                          if (attachmentInputRef.current) attachmentInputRef.current.value = "";
+                        }
+                      }}
+                    />
+                    <Button variant="outline" size="sm" onClick={() => attachmentInputRef.current?.click()} disabled={uploadingAttachment}>
+                      <Paperclip className="mr-1 h-3 w-3" /> {uploadingAttachment ? "A carregar..." : "Anexar"}
+                    </Button>
+                  </div>
+                </div>
+                {attachments.length > 0 && (
+                  <div className="space-y-2">
+                    {attachments.map((att, i) => (
+                      <div key={i} className="flex items-center justify-between rounded-md bg-secondary p-3">
+                        <div className="flex items-center gap-2">
+                          <Paperclip className="h-4 w-4 text-muted-foreground" />
+                          <span className="text-sm text-foreground">{att.name}</span>
+                        </div>
+                        <Button variant="ghost" size="icon" onClick={() => setAttachments((prev) => prev.filter((_, idx) => idx !== i))}>
+                          <X className="h-4 w-4 text-destructive" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
               <Button onClick={createQuestionnaire} disabled={submitting} className="w-full">
                 {submitting ? "A criar..." : "Criar Questionário"}
               </Button>
@@ -424,6 +483,18 @@ const CustomQuestionnaires = () => {
                 </div>
               ))}
             </div>
+            {/* Show attachments */}
+            {viewingQuestionnaire && (viewingQuestionnaire as any).attachments && (viewingQuestionnaire as any).attachments.length > 0 && (
+              <div className="space-y-3">
+                <Label className="text-sm font-semibold">Anexos:</Label>
+                {(viewingQuestionnaire as any).attachments.map((att: any, i: number) => (
+                  <a key={i} href={att.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 rounded-md bg-secondary p-3 hover:bg-accent transition-colors">
+                    <Paperclip className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-sm text-foreground">{att.name}</span>
+                  </a>
+                ))}
+              </div>
+            )}
             {assignments.length > 0 && (
               <div className="space-y-3 mt-4">
                 <Label className="text-sm font-semibold">Atribuído a:</Label>

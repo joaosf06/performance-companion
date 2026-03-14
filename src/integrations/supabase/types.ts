@@ -152,6 +152,7 @@ export type Database = {
       }
       custom_questionnaires: {
         Row: {
+          attachments: Json | null
           coach_id: string
           created_at: string
           description: string | null
@@ -159,6 +160,7 @@ export type Database = {
           title: string
         }
         Insert: {
+          attachments?: Json | null
           coach_id: string
           created_at?: string
           description?: string | null
@@ -166,6 +168,7 @@ export type Database = {
           title: string
         }
         Update: {
+          attachments?: Json | null
           coach_id?: string
           created_at?: string
           description?: string | null
@@ -216,6 +219,100 @@ export type Database = {
           phone?: string | null
           position?: string
           preferred_foot?: string
+        }
+        Relationships: []
+      }
+      library_files: {
+        Row: {
+          coach_id: string
+          created_at: string
+          description: string | null
+          file_name: string
+          file_type: string | null
+          file_url: string
+          folder_id: string
+          id: string
+        }
+        Insert: {
+          coach_id: string
+          created_at?: string
+          description?: string | null
+          file_name: string
+          file_type?: string | null
+          file_url: string
+          folder_id: string
+          id?: string
+        }
+        Update: {
+          coach_id?: string
+          created_at?: string
+          description?: string | null
+          file_name?: string
+          file_type?: string | null
+          file_url?: string
+          folder_id?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "library_files_folder_id_fkey"
+            columns: ["folder_id"]
+            isOneToOne: false
+            referencedRelation: "library_folders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      library_folder_assignments: {
+        Row: {
+          athlete_id: string
+          created_at: string
+          folder_id: string
+          id: string
+        }
+        Insert: {
+          athlete_id: string
+          created_at?: string
+          folder_id: string
+          id?: string
+        }
+        Update: {
+          athlete_id?: string
+          created_at?: string
+          folder_id?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "library_folder_assignments_folder_id_fkey"
+            columns: ["folder_id"]
+            isOneToOne: false
+            referencedRelation: "library_folders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      library_folders: {
+        Row: {
+          coach_id: string
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+        }
+        Insert: {
+          coach_id: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+        }
+        Update: {
+          coach_id?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
         }
         Relationships: []
       }
