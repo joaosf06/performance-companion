@@ -15,6 +15,7 @@ import NotFound from "./pages/NotFound";
 import FreeTrial from "./pages/FreeTrial";
 import Chat from "./pages/Chat";
 import CustomQuestionnaires from "./pages/CustomQuestionnaires";
+import Library from "./pages/Library";
 
 const queryClient = new QueryClient();
 
