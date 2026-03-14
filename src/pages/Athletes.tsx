@@ -13,6 +13,7 @@ import { Navigate, Link } from "react-router-dom";
 interface Athlete {
   athlete_id: string;
   full_name: string;
+  short_id: string;
   id: string;
 }
 
@@ -33,12 +34,13 @@ const Athletes = () => {
       const ids = links.map((l) => l.athlete_id);
       const { data: profiles } = await supabase
         .from("profiles")
-        .select("user_id, full_name")
+        .select("user_id, full_name, short_id")
         .in("user_id", ids);
 
       const merged = links.map((l) => ({
         ...l,
         full_name: profiles?.find((p) => p.user_id === l.athlete_id)?.full_name || "Sem nome",
+        short_id: profiles?.find((p) => p.user_id === l.athlete_id)?.short_id || "",
       }));
       setAthletes(merged);
     } else {
@@ -56,10 +58,23 @@ const Athletes = () => {
     if (!email.trim() || !user) return;
     setLoading(true);
     try {
-      const athleteId = email.trim();
+      // Look up athlete by short_id
+      const { data: profile, error: lookupError } = await supabase
+        .from("profiles")
+        .select("user_id")
+        .eq("short_id", email.trim())
+        .maybeSingle();
+      
+      if (lookupError) throw lookupError;
+      if (!profile) {
+        toast.error("Atleta não encontrado com esse código");
+        setLoading(false);
+        return;
+      }
+
       const { error } = await supabase.from("coach_athletes").insert({
         coach_id: user.id,
-        athlete_id: athleteId,
+        athlete_id: profile.user_id,
       });
       if (error) throw error;
       toast.success("Atleta adicionado!");
@@ -97,9 +112,10 @@ const Athletes = () => {
           <CardContent>
             <div className="flex gap-3">
               <Input
-                placeholder="ID do atleta"
+                placeholder="Código do atleta (6 dígitos)"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                maxLength={6}
                 className="bg-background border-border text-foreground placeholder:text-muted-foreground"
               />
               <Button onClick={addAthlete} disabled={loading}>
@@ -108,7 +124,7 @@ const Athletes = () => {
               </Button>
             </div>
             <p className="mt-2 text-xs text-muted-foreground">
-              O atleta deve partilhar o seu ID de utilizador contigo.
+              O atleta deve partilhar o seu código de 6 dígitos contigo.
             </p>
           </CardContent>
         </Card>
@@ -126,7 +142,7 @@ const Athletes = () => {
                   <div key={a.id} className="flex items-center justify-between rounded-md bg-secondary p-3">
                     <div>
                       <p className="text-sm font-medium text-foreground">{a.full_name}</p>
-                      <p className="text-xs text-muted-foreground">{a.athlete_id}</p>
+                      <p className="text-xs text-muted-foreground">#{a.short_id}</p>
                     </div>
                     <div className="flex gap-2">
                       <Link to={`/athletes/${a.athlete_id}`}>

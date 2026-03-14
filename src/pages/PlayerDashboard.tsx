@@ -49,13 +49,23 @@ const PlayerDashboard = () => {
     fetchData();
   }, [user]);
 
+  // Fetch short_id
+  const [shortId, setShortId] = useState<string>("");
+  useEffect(() => {
+    if (!user) return;
+    supabase.from("profiles").select("short_id").eq("user_id", user.id).maybeSingle()
+      .then(({ data }) => { if (data?.short_id) setShortId(data.short_id); });
+  }, [user]);
+
   return (
     <div className="space-y-8">
       <div>
         <h1 className="text-2xl font-bold text-foreground">
           Olá, {profile?.full_name || "Jogador"}
         </h1>
-        <p className="text-muted-foreground mt-1">Bem-vindo ao teu painel de treino.</p>
+        <p className="text-muted-foreground mt-1">
+          Bem-vindo ao teu painel de treino. O teu código: <span className="font-mono font-bold text-foreground">#{shortId}</span>
+        </p>
       </div>
 
       <div className="grid gap-6 md:grid-cols-3">

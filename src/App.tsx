@@ -14,6 +14,7 @@ import AthleteProfile from "./pages/AthleteProfile";
 import NotFound from "./pages/NotFound";
 import FreeTrial from "./pages/FreeTrial";
 import Chat from "./pages/Chat";
+import CustomQuestionnaires from "./pages/CustomQuestionnaires";
 
 const queryClient = new QueryClient();
 
@@ -59,6 +60,7 @@ const App = () => (
             <Route path="/reports" element={<ProtectedRoute><Reports /></ProtectedRoute>} />
             <Route path="/questionnaire" element={<ProtectedRoute><Questionnaire /></ProtectedRoute>} />
             <Route path="/chat" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
+            <Route path="/custom-questionnaires" element={<ProtectedRoute><CustomQuestionnaires /></ProtectedRoute>} />
             <Route path="/treino-gratis" element={<FreeTrial />} />
             <Route path="*" element={<NotFound />} />
           </Routes>

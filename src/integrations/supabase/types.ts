@@ -35,6 +35,145 @@ export type Database = {
         }
         Relationships: []
       }
+      custom_questionnaire_assignments: {
+        Row: {
+          athlete_id: string
+          completed_at: string | null
+          created_at: string
+          id: string
+          questionnaire_id: string
+        }
+        Insert: {
+          athlete_id: string
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          questionnaire_id: string
+        }
+        Update: {
+          athlete_id?: string
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          questionnaire_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "custom_questionnaire_assignments_questionnaire_id_fkey"
+            columns: ["questionnaire_id"]
+            isOneToOne: false
+            referencedRelation: "custom_questionnaires"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      custom_questionnaire_fields: {
+        Row: {
+          field_type: string
+          id: string
+          label: string
+          options: Json | null
+          questionnaire_id: string
+          required: boolean
+          sort_order: number
+        }
+        Insert: {
+          field_type?: string
+          id?: string
+          label: string
+          options?: Json | null
+          questionnaire_id: string
+          required?: boolean
+          sort_order?: number
+        }
+        Update: {
+          field_type?: string
+          id?: string
+          label?: string
+          options?: Json | null
+          questionnaire_id?: string
+          required?: boolean
+          sort_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "custom_questionnaire_fields_questionnaire_id_fkey"
+            columns: ["questionnaire_id"]
+            isOneToOne: false
+            referencedRelation: "custom_questionnaires"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      custom_questionnaire_responses: {
+        Row: {
+          assignment_id: string
+          created_at: string
+          field_id: string
+          file_url: string | null
+          id: string
+          number_value: number | null
+          text_value: string | null
+        }
+        Insert: {
+          assignment_id: string
+          created_at?: string
+          field_id: string
+          file_url?: string | null
+          id?: string
+          number_value?: number | null
+          text_value?: string | null
+        }
+        Update: {
+          assignment_id?: string
+          created_at?: string
+          field_id?: string
+          file_url?: string | null
+          id?: string
+          number_value?: number | null
+          text_value?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "custom_questionnaire_responses_assignment_id_fkey"
+            columns: ["assignment_id"]
+            isOneToOne: false
+            referencedRelation: "custom_questionnaire_assignments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "custom_questionnaire_responses_field_id_fkey"
+            columns: ["field_id"]
+            isOneToOne: false
+            referencedRelation: "custom_questionnaire_fields"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      custom_questionnaires: {
+        Row: {
+          coach_id: string
+          created_at: string
+          description: string | null
+          id: string
+          title: string
+        }
+        Insert: {
+          coach_id: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          title: string
+        }
+        Update: {
+          coach_id?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          title?: string
+        }
+        Relationships: []
+      }
       free_trial_requests: {
         Row: {
           age: number
@@ -122,6 +261,7 @@ export type Database = {
           created_at: string
           full_name: string
           id: string
+          short_id: string | null
           updated_at: string
           user_id: string
         }
@@ -130,6 +270,7 @@ export type Database = {
           created_at?: string
           full_name?: string
           id?: string
+          short_id?: string | null
           updated_at?: string
           user_id: string
         }
@@ -138,6 +279,7 @@ export type Database = {
           created_at?: string
           full_name?: string
           id?: string
+          short_id?: string | null
           updated_at?: string
           user_id?: string
         }
@@ -247,6 +389,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      generate_short_id: { Args: never; Returns: string }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
