@@ -158,6 +158,7 @@ const CustomQuestionnaires = () => {
       setTitle("");
       setDescription("");
       setFields([{ field_type: "text", label: "", required: false, sort_order: 0 }]);
+      setAttachments([]);
       fetchAll();
     } catch (error: any) {
       toast.error(error.message);
