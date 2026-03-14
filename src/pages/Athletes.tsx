@@ -58,10 +58,23 @@ const Athletes = () => {
     if (!email.trim() || !user) return;
     setLoading(true);
     try {
-      const athleteId = email.trim();
+      // Look up athlete by short_id
+      const { data: profile, error: lookupError } = await supabase
+        .from("profiles")
+        .select("user_id")
+        .eq("short_id", email.trim())
+        .maybeSingle();
+      
+      if (lookupError) throw lookupError;
+      if (!profile) {
+        toast.error("Atleta não encontrado com esse código");
+        setLoading(false);
+        return;
+      }
+
       const { error } = await supabase.from("coach_athletes").insert({
         coach_id: user.id,
-        athlete_id: athleteId,
+        athlete_id: profile.user_id,
       });
       if (error) throw error;
       toast.success("Atleta adicionado!");
