@@ -4,7 +4,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { toast } from "sonner";
 
 const Auth = () => {
@@ -12,7 +11,6 @@ const Auth = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
-  const [role, setRole] = useState<"player" | "coach">("player");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -40,14 +38,14 @@ const Auth = () => {
         if (data.user) {
           const { error: roleError } = await supabase.from("user_roles").insert({
             user_id: data.user.id,
-            role,
+            role: "player" as const,
           });
           if (roleError) throw roleError;
 
           await supabase.from("profiles").update({ full_name: fullName }).eq("user_id", data.user.id);
         }
 
-        toast.success("Conta criada com sucesso!");
+        toast.success("Conta criada com sucesso! Confirma o teu email.");
         navigate("/dashboard");
       }
     } catch (error: any) {
@@ -111,21 +109,6 @@ const Auth = () => {
             />
           </div>
 
-          {!isLogin && (
-            <div className="space-y-3">
-              <Label className="text-foreground">Tipo de conta</Label>
-              <RadioGroup value={role} onValueChange={(v) => setRole(v as "player" | "coach")} className="flex gap-6">
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="player" id="player" />
-                  <Label htmlFor="player" className="text-foreground cursor-pointer">Jogador</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="coach" id="coach" />
-                  <Label htmlFor="coach" className="text-foreground cursor-pointer">Treinador</Label>
-                </div>
-              </RadioGroup>
-            </div>
-          )}
 
           <Button type="submit" className="w-full" disabled={loading}>
             {loading ? "A processar..." : isLogin ? "Entrar" : "Criar conta"}
