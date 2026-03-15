@@ -3,9 +3,14 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Users, FileText, AlertTriangle } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Users, FileText, AlertTriangle, ShieldCheck } from "lucide-react";
 import { Link } from "react-router-dom";
 import { format, startOfWeek } from "date-fns";
+import { toast } from "sonner";
 
 const CoachDashboard = () => {
   const { user, profile } = useAuth();
@@ -14,25 +19,27 @@ const CoachDashboard = () => {
   const [pendingAlerts, setPendingAlerts] = useState(0);
   const [recentAthletes, setRecentAthletes] = useState<any[]>([]);
 
+  // Upgrade dialog
+  const [upgradeOpen, setUpgradeOpen] = useState(false);
+  const [upgradeUserId, setUpgradeUserId] = useState("");
+  const [upgrading, setUpgrading] = useState(false);
+
   useEffect(() => {
     if (!user) return;
 
     const fetchData = async () => {
-      // Athletes
       const { data: athletes, count } = await supabase
         .from("coach_athletes")
         .select("athlete_id", { count: "exact" })
         .eq("coach_id", user.id);
       setAthleteCount(count || 0);
 
-      // Reports count
       const { count: rCount } = await supabase
         .from("training_reports")
         .select("*", { count: "exact", head: true })
         .eq("coach_id", user.id);
       setReportCount(rCount || 0);
 
-      // Check pending questionnaires for athletes
       if (athletes && athletes.length > 0) {
         const athleteIds = athletes.map((a) => a.athlete_id);
         const weekStart = startOfWeek(new Date(), { weekStartsOn: 1 });
@@ -47,7 +54,6 @@ const CoachDashboard = () => {
         const answeredIds = new Set((answered || []).map((q) => q.player_id));
         setPendingAlerts(athleteIds.filter((id) => !answeredIds.has(id)).length);
 
-        // Recent athletes with profiles
         const { data: profiles } = await supabase
           .from("profiles")
           .select("user_id, full_name")
@@ -59,13 +65,57 @@ const CoachDashboard = () => {
     fetchData();
   }, [user]);
 
+  const handleUpgrade = async () => {
+    if (!upgradeUserId.trim()) return;
+    setUpgrading(true);
+    try {
+      const { data: profileData, error: profileError } = await supabase
+        .from("profiles")
+        .select("user_id")
+        .eq("short_id", upgradeUserId.trim().replace("#", ""))
+        .maybeSingle();
+
+      if (profileError || !profileData) {
+        toast.error("Utilizador não encontrado com esse código.");
+        return;
+      }
+
+      const { error: deleteError } = await supabase
+        .from("user_roles")
+        .delete()
+        .eq("user_id", profileData.user_id);
+
+      if (deleteError) throw deleteError;
+
+      const { error: insertError } = await supabase
+        .from("user_roles")
+        .insert({ user_id: profileData.user_id, role: "coach" as const });
+
+      if (insertError) throw insertError;
+
+      toast.success("Utilizador promovido a treinador com sucesso!");
+      setUpgradeOpen(false);
+      setUpgradeUserId("");
+    } catch (err: any) {
+      toast.error(err.message);
+    } finally {
+      setUpgrading(false);
+    }
+  };
+
   return (
     <div className="space-y-8">
-      <div>
-        <h1 className="text-2xl font-bold text-foreground">
-          Olá, {profile?.full_name || "Treinador"}
-        </h1>
-        <p className="text-muted-foreground mt-1">Painel do treinador.</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-foreground">
+            Olá, {profile?.full_name || "Treinador"}
+          </h1>
+          <p className="text-muted-foreground mt-1">Painel do treinador.</p>
+        </div>
+        <Button variant="outline" size="sm" onClick={() => setUpgradeOpen(true)}>
+          <ShieldCheck className="mr-2 h-4 w-4" />
+          Promover a Treinador
+        </Button>
       </div>
 
       <div className="grid gap-6 md:grid-cols-3">
@@ -113,7 +163,6 @@ const CoachDashboard = () => {
         </Card>
       </div>
 
-      {/* Recent Athletes */}
       {recentAthletes.length > 0 && (
         <Card>
           <CardHeader>
@@ -133,6 +182,32 @@ const CoachDashboard = () => {
           </CardContent>
         </Card>
       )}
+
+      {/* Upgrade Dialog */}
+      <Dialog open={upgradeOpen} onOpenChange={setUpgradeOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Promover Utilizador a Treinador</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <p className="text-sm text-muted-foreground">
+              Introduz o código de 6 dígitos do utilizador que queres promover a treinador.
+            </p>
+            <div className="space-y-2">
+              <Label>Código do Utilizador</Label>
+              <Input
+                value={upgradeUserId}
+                onChange={(e) => setUpgradeUserId(e.target.value)}
+                placeholder="Ex: 482931"
+                className="bg-background"
+              />
+            </div>
+            <Button onClick={handleUpgrade} disabled={upgrading || !upgradeUserId.trim()} className="w-full">
+              {upgrading ? "A processar..." : "Promover a Treinador"}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
