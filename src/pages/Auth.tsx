@@ -39,14 +39,14 @@ const Auth = () => {
         if (data.user) {
           const { error: roleError } = await supabase.from("user_roles").insert({
             user_id: data.user.id,
-            role,
+            role: "player" as const,
           });
           if (roleError) throw roleError;
 
           await supabase.from("profiles").update({ full_name: fullName }).eq("user_id", data.user.id);
         }
 
-        toast.success("Conta criada com sucesso!");
+        toast.success("Conta criada com sucesso! Confirma o teu email.");
         navigate("/dashboard");
       }
     } catch (error: any) {
