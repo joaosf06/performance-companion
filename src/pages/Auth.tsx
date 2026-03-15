@@ -110,21 +110,6 @@ const Auth = () => {
             />
           </div>
 
-          {!isLogin && (
-            <div className="space-y-3">
-              <Label className="text-foreground">Tipo de conta</Label>
-              <RadioGroup value={role} onValueChange={(v) => setRole(v as "player" | "coach")} className="flex gap-6">
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="player" id="player" />
-                  <Label htmlFor="player" className="text-foreground cursor-pointer">Jogador</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="coach" id="coach" />
-                  <Label htmlFor="coach" className="text-foreground cursor-pointer">Treinador</Label>
-                </div>
-              </RadioGroup>
-            </div>
-          )}
 
           <Button type="submit" className="w-full" disabled={loading}>
             {loading ? "A processar..." : isLogin ? "Entrar" : "Criar conta"}
