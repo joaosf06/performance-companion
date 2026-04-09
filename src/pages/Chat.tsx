@@ -213,7 +213,8 @@ const Chat = () => {
     if (!file || !user || !selectedContact) return;
 
     setUploading(true);
-    const filePath = `${user.id}/${Date.now()}_${file.name}`;
+    const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+    const filePath = `${user.id}/${Date.now()}_${safeName}`;
     const { error } = await supabase.storage.from("chat-files").upload(filePath, file);
 
     if (!error) {

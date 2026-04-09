@@ -136,7 +136,8 @@ const Library = () => {
     if (!file || !selectedFolder || !user) return;
     setUploading(true);
     try {
-      const path = `${user.id}/${selectedFolder.id}/${Date.now()}_${file.name}`;
+      const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+      const path = `${user.id}/${selectedFolder.id}/${Date.now()}_${safeName}`;
       const { error: uploadError } = await supabase.storage.from("library-files").upload(path, file);
       if (uploadError) throw uploadError;
 
