@@ -353,7 +353,8 @@ const CustomQuestionnaires = () => {
                         if (!file || !user) return;
                         setUploadingAttachment(true);
                         try {
-                          const path = `${user.id}/${Date.now()}_${file.name}`;
+                          const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+                          const path = `${user.id}/${Date.now()}_${safeName}`;
                           const { error: upErr } = await supabase.storage.from("questionnaire-files").upload(path, file);
                           if (upErr) throw upErr;
                           const { data: urlData } = supabase.storage.from("questionnaire-files").getPublicUrl(path);
