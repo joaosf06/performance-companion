@@ -16,6 +16,7 @@ import FreeTrial from "./pages/FreeTrial";
 import Chat from "./pages/Chat";
 import CustomQuestionnaires from "./pages/CustomQuestionnaires";
 import Library from "./pages/Library";
+import AnswerQuestionnaire from "./pages/AnswerQuestionnaire";
 
 const queryClient = new QueryClient();
 
@@ -50,6 +51,7 @@ const App = () => (
             <Route path="/chat" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
             <Route path="/custom-questionnaires" element={<ProtectedRoute><CustomQuestionnaires /></ProtectedRoute>} />
             <Route path="/library" element={<ProtectedRoute><Library /></ProtectedRoute>} />
+            <Route path="/answer-questionnaire/:assignmentId" element={<ProtectedRoute><AnswerQuestionnaire /></ProtectedRoute>} />
             <Route path="/treino-gratis" element={<FreeTrial />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
