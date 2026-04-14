@@ -3,59 +3,88 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { FileText, ClipboardList, TrendingUp } from "lucide-react";
+import { FileText, ClipboardList, TrendingUp, ListChecks } from "lucide-react";
 import { Link } from "react-router-dom";
 import { format, startOfWeek } from "date-fns";
 import { pt } from "date-fns/locale";
+
+interface CustomAssignment {
+  id: string;
+  questionnaire_id: string;
+  completed_at: string | null;
+  created_at: string;
+  title?: string;
+}
 
 const PlayerDashboard = () => {
   const { user, profile } = useAuth();
   const [lastReport, setLastReport] = useState<any>(null);
   const [hasPendingQuestionnaire, setHasPendingQuestionnaire] = useState(false);
   const [reportCount, setReportCount] = useState(0);
+  const [customAssignments, setCustomAssignments] = useState<CustomAssignment[]>([]);
 
   useEffect(() => {
     if (!user) return;
 
     const fetchData = async () => {
-      // Last report
-      const { data: report } = await supabase
-        .from("training_reports")
-        .select("*")
-        .eq("athlete_id", user.id)
-        .order("created_at", { ascending: false })
-        .limit(1)
-        .maybeSingle();
-      setLastReport(report);
+      const [reportRes, countRes, weeklyRes, assignRes] = await Promise.all([
+        supabase
+          .from("training_reports")
+          .select("*")
+          .eq("athlete_id", user.id)
+          .order("created_at", { ascending: false })
+          .limit(1)
+          .maybeSingle(),
+        supabase
+          .from("training_reports")
+          .select("*", { count: "exact", head: true })
+          .eq("athlete_id", user.id),
+        supabase
+          .from("weekly_questionnaires")
+          .select("id")
+          .eq("player_id", user.id)
+          .eq("week_start", format(startOfWeek(new Date(), { weekStartsOn: 1 }), "yyyy-MM-dd"))
+          .maybeSingle(),
+        supabase
+          .from("custom_questionnaire_assignments")
+          .select("id, questionnaire_id, completed_at, created_at")
+          .eq("athlete_id", user.id)
+          .order("created_at", { ascending: false }),
+      ]);
 
-      // Report count
-      const { count } = await supabase
-        .from("training_reports")
-        .select("*", { count: "exact", head: true })
-        .eq("athlete_id", user.id);
-      setReportCount(count || 0);
+      setLastReport(reportRes.data);
+      setReportCount(countRes.count || 0);
+      setHasPendingQuestionnaire(!weeklyRes.data);
 
-      // Check pending questionnaire
-      const weekStart = startOfWeek(new Date(), { weekStartsOn: 1 });
-      const { data: questionnaire } = await supabase
-        .from("weekly_questionnaires")
-        .select("id")
-        .eq("player_id", user.id)
-        .eq("week_start", format(weekStart, "yyyy-MM-dd"))
-        .maybeSingle();
-      setHasPendingQuestionnaire(!questionnaire);
+      if (assignRes.data && assignRes.data.length > 0) {
+        // Get questionnaire titles
+        const qIds = [...new Set(assignRes.data.map((a) => a.questionnaire_id))];
+        const { data: questionnaires } = await supabase
+          .from("custom_questionnaires")
+          .select("id, title")
+          .in("id", qIds);
+        
+        const titleMap = new Map((questionnaires || []).map((q: any) => [q.id, q.title]));
+        setCustomAssignments(
+          assignRes.data.map((a) => ({
+            ...a,
+            title: titleMap.get(a.questionnaire_id) || "Questionário",
+          }))
+        );
+      }
     };
 
     fetchData();
   }, [user]);
 
-  // Fetch short_id
   const [shortId, setShortId] = useState<string>("");
   useEffect(() => {
     if (!user) return;
     supabase.from("profiles").select("short_id").eq("user_id", user.id).maybeSingle()
       .then(({ data }) => { if (data?.short_id) setShortId(data.short_id); });
   }, [user]);
+
+  const pendingCustom = customAssignments.filter((a) => !a.completed_at);
 
   return (
     <div className="space-y-8">
@@ -69,7 +98,6 @@ const PlayerDashboard = () => {
       </div>
 
       <div className="grid gap-6 md:grid-cols-3">
-        {/* Pending Questionnaire */}
         <Link to="/questionnaire">
           <Card className={`cursor-pointer transition-all hover:border-primary/50 ${hasPendingQuestionnaire ? 'border-primary/30' : ''}`}>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
@@ -87,7 +115,6 @@ const PlayerDashboard = () => {
           </Card>
         </Link>
 
-        {/* Reports */}
         <Link to="/reports">
           <Card className="cursor-pointer transition-all hover:border-primary/50">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
@@ -101,7 +128,6 @@ const PlayerDashboard = () => {
           </Card>
         </Link>
 
-        {/* Last Score */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">Última Avaliação</CardTitle>
@@ -119,6 +145,35 @@ const PlayerDashboard = () => {
           </CardContent>
         </Card>
       </div>
+
+      {/* Custom Questionnaires */}
+      {customAssignments.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <ListChecks className="h-5 w-5" />
+              Questionários do Treinador
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {customAssignments.map((a) => (
+              <Link key={a.id} to={`/answer-questionnaire/${a.id}`}>
+                <div className="flex items-center justify-between rounded-md bg-secondary p-4 hover:bg-accent transition-colors cursor-pointer">
+                  <div>
+                    <p className="text-sm font-medium text-foreground">{a.title}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {format(new Date(a.created_at), "d MMM yyyy", { locale: pt })}
+                    </p>
+                  </div>
+                  <Badge variant={a.completed_at ? "secondary" : "default"}>
+                    {a.completed_at ? "Respondido" : "Pendente"}
+                  </Badge>
+                </div>
+              </Link>
+            ))}
+          </CardContent>
+        </Card>
+      )}
 
       {/* Latest Report */}
       {lastReport && (
