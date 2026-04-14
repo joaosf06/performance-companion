@@ -12,7 +12,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { Navigate } from "react-router-dom";
-import { Plus, Trash2, FolderOpen, Upload, FileText, Video, Image, File, Users, Download } from "lucide-react";
+import { Plus, Trash2, FolderOpen, Upload, FileText, Video, Image, File, Users, Download, Play, X } from "lucide-react";
 import { format } from "date-fns";
 import { pt } from "date-fns/locale";
 
