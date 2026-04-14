@@ -16,6 +16,7 @@ import FreeTrial from "./pages/FreeTrial";
 import Chat from "./pages/Chat";
 import CustomQuestionnaires from "./pages/CustomQuestionnaires";
 import Library from "./pages/Library";
+import AnswerQuestionnaire from "./pages/AnswerQuestionnaire";
 
 const queryClient = new QueryClient();
 
