@@ -51,6 +51,13 @@ const Library = () => {
   const [selectedFolder, setSelectedFolder] = useState<LibFolder | null>(null);
   const [files, setFiles] = useState<LibFile[]>([]);
   const [athletes, setAthletes] = useState<Athlete[]>([]);
+  const [previewFile, setPreviewFile] = useState<LibFile | null>(null);
+  const { user, role } = useAuth();
+  const isCoach = role === "coach";
+  const [folders, setFolders] = useState<LibFolder[]>([]);
+  const [selectedFolder, setSelectedFolder] = useState<LibFolder | null>(null);
+  const [files, setFiles] = useState<LibFile[]>([]);
+  const [athletes, setAthletes] = useState<Athlete[]>([]);
 
   // Create folder state
   const [newFolderName, setNewFolderName] = useState("");
