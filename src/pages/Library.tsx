@@ -39,9 +39,87 @@ interface Athlete {
 
 const getFileIcon = (type: string | null) => {
   if (!type) return <File className="h-5 w-5 text-muted-foreground" />;
-  if (type.startsWith("video")) return <Video className="h-5 w-5 text-blue-500" />;
-  if (type.startsWith("image")) return <Image className="h-5 w-5 text-green-500" />;
-  return <FileText className="h-5 w-5 text-orange-500" />;
+  if (type.startsWith("video")) return <Video className="h-5 w-5 text-primary" />;
+  if (type.startsWith("image")) return <Image className="h-5 w-5 text-primary" />;
+  return <FileText className="h-5 w-5 text-primary" />;
+};
+
+const FilePreviewCard = ({
+  file,
+  isCoach,
+  onDelete,
+  onClick,
+}: {
+  file: LibFile;
+  isCoach: boolean;
+  onDelete: (id: string) => void;
+  onClick: () => void;
+}) => {
+  const isVideo = file.file_type?.startsWith("video");
+  const isImage = file.file_type?.startsWith("image");
+
+  return (
+    <div
+      className="group relative rounded-lg overflow-hidden bg-card border border-border hover:border-primary/50 transition-all cursor-pointer"
+      onClick={onClick}
+    >
+      {/* Thumbnail / Preview area */}
+      <div className="aspect-video bg-secondary flex items-center justify-center overflow-hidden relative">
+        {isVideo ? (
+          <>
+            <video
+              src={file.file_url}
+              className="w-full h-full object-cover"
+              muted
+              preload="metadata"
+            />
+            <div className="absolute inset-0 bg-background/40 flex items-center justify-center group-hover:bg-background/20 transition-colors">
+              <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center">
+                <Video className="h-5 w-5 text-primary-foreground" />
+              </div>
+            </div>
+          </>
+        ) : isImage ? (
+          <img
+            src={file.file_url}
+            alt={file.file_name}
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <div className="flex flex-col items-center gap-2">
+            {getFileIcon(file.file_type)}
+            <span className="text-xs text-muted-foreground uppercase">
+              {file.file_type?.split("/")[1] || "ficheiro"}
+            </span>
+          </div>
+        )}
+      </div>
+
+      {/* Info */}
+      <div className="p-3">
+        <p className="text-sm font-medium text-foreground truncate">{file.file_name}</p>
+        {file.description && (
+          <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{file.description}</p>
+        )}
+        <p className="text-xs text-muted-foreground mt-1">
+          {format(new Date(file.created_at), "d MMM yyyy", { locale: pt })}
+        </p>
+      </div>
+
+      {/* Delete button for coaches */}
+      {isCoach && (
+        <button
+          className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity p-1.5 rounded-full bg-background/80 hover:bg-destructive/20"
+          onClick={(e) => {
+            e.stopPropagation();
+            onDelete(file.id);
+          }}
+        >
+          <Trash2 className="h-3.5 w-3.5 text-destructive" />
+        </button>
+      )}
+    </div>
+  );
 };
 
 const Library = () => {
@@ -52,24 +130,15 @@ const Library = () => {
   const [files, setFiles] = useState<LibFile[]>([]);
   const [athletes, setAthletes] = useState<Athlete[]>([]);
   const [previewFile, setPreviewFile] = useState<LibFile | null>(null);
-  const { user, role } = useAuth();
-  const isCoach = role === "coach";
-  const [folders, setFolders] = useState<LibFolder[]>([]);
-  const [selectedFolder, setSelectedFolder] = useState<LibFolder | null>(null);
-  const [files, setFiles] = useState<LibFile[]>([]);
-  const [athletes, setAthletes] = useState<Athlete[]>([]);
 
-  // Create folder state
   const [newFolderName, setNewFolderName] = useState("");
   const [newFolderDesc, setNewFolderDesc] = useState("");
   const [creatingFolder, setCreatingFolder] = useState(false);
 
-  // Upload state
   const [uploading, setUploading] = useState(false);
   const [fileDescription, setFileDescription] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Assign dialog
   const [assignOpen, setAssignOpen] = useState(false);
   const [assignFolderId, setAssignFolderId] = useState<string | null>(null);
   const [selectedAthletes, setSelectedAthletes] = useState<string[]>([]);
@@ -189,12 +258,10 @@ const Library = () => {
   const saveAssignments = async () => {
     if (!assignFolderId) return;
     try {
-      // Remove unselected
       const toRemove = existingAssignments.filter((id) => !selectedAthletes.includes(id));
       if (toRemove.length > 0) {
         await supabase.from("library_folder_assignments").delete().eq("folder_id", assignFolderId).in("athlete_id", toRemove);
       }
-      // Add new
       const toAdd = selectedAthletes.filter((id) => !existingAssignments.includes(id));
       if (toAdd.length > 0) {
         const inserts = toAdd.map((athlete_id) => ({ folder_id: assignFolderId, athlete_id }));
@@ -210,6 +277,50 @@ const Library = () => {
 
   const toggleAthlete = (id: string) => {
     setSelectedAthletes((prev) => prev.includes(id) ? prev.filter((a) => a !== id) : [...prev, id]);
+  };
+
+  const renderPreviewContent = (file: LibFile) => {
+    const isVideo = file.file_type?.startsWith("video");
+    const isImage = file.file_type?.startsWith("image");
+
+    if (isVideo) {
+      return (
+        <video
+          src={file.file_url}
+          controls
+          autoPlay
+          className="w-full max-h-[70vh] rounded-lg bg-black"
+        />
+      );
+    }
+    if (isImage) {
+      return (
+        <img
+          src={file.file_url}
+          alt={file.file_name}
+          className="w-full max-h-[70vh] object-contain rounded-lg"
+        />
+      );
+    }
+    // PDF or other
+    if (file.file_type === "application/pdf") {
+      return (
+        <iframe
+          src={file.file_url}
+          className="w-full h-[70vh] rounded-lg"
+          title={file.file_name}
+        />
+      );
+    }
+    return (
+      <div className="flex flex-col items-center gap-4 py-12">
+        {getFileIcon(file.file_type)}
+        <p className="text-muted-foreground">Pré-visualização não disponível para este tipo de ficheiro.</p>
+        <a href={file.file_url} target="_blank" rel="noopener noreferrer">
+          <Button><Download className="mr-2 h-4 w-4" /> Descarregar</Button>
+        </a>
+      </div>
+    );
   };
 
   return (
@@ -230,7 +341,6 @@ const Library = () => {
           )}
         </div>
 
-        {/* Create folder form */}
         {creatingFolder && isCoach && (
           <Card>
             <CardContent className="pt-6 space-y-4">
@@ -247,7 +357,6 @@ const Library = () => {
           </Card>
         )}
 
-        {/* Folder list or folder content */}
         {!selectedFolder ? (
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {folders.length === 0 ? (
@@ -299,7 +408,6 @@ const Library = () => {
               </div>
             </div>
 
-            {/* Upload form (coach only) */}
             {isCoach && (
               <Card>
                 <CardContent className="pt-6 space-y-4">
@@ -328,7 +436,7 @@ const Library = () => {
               </Card>
             )}
 
-            {/* Files list */}
+            {/* Netflix-style file grid */}
             {files.length === 0 ? (
               <Card>
                 <CardContent className="py-8 text-center">
@@ -336,39 +444,47 @@ const Library = () => {
                 </CardContent>
               </Card>
             ) : (
-              <div className="space-y-3">
+              <div className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                 {files.map((file) => (
-                  <Card key={file.id}>
-                    <CardContent className="flex items-center justify-between py-4">
-                      <div className="flex items-center gap-4">
-                        {getFileIcon(file.file_type)}
-                        <div>
-                          <p className="text-sm font-medium text-foreground">{file.file_name}</p>
-                          {file.description && <p className="text-xs text-muted-foreground mt-1">{file.description}</p>}
-                          <p className="text-xs text-muted-foreground mt-1">
-                            {format(new Date(file.created_at), "d MMM yyyy", { locale: pt })}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex gap-2">
-                        <a href={file.file_url} target="_blank" rel="noopener noreferrer">
-                          <Button variant="outline" size="sm">
-                            <Download className="mr-1 h-3 w-3" /> Abrir
-                          </Button>
-                        </a>
-                        {isCoach && (
-                          <Button variant="ghost" size="icon" onClick={() => deleteFile(file.id)}>
-                            <Trash2 className="h-4 w-4 text-destructive" />
-                          </Button>
-                        )}
-                      </div>
-                    </CardContent>
-                  </Card>
+                  <FilePreviewCard
+                    key={file.id}
+                    file={file}
+                    isCoach={isCoach}
+                    onDelete={deleteFile}
+                    onClick={() => setPreviewFile(file)}
+                  />
                 ))}
               </div>
             )}
           </div>
         )}
+
+        {/* File preview dialog */}
+        <Dialog open={!!previewFile} onOpenChange={(open) => !open && setPreviewFile(null)}>
+          <DialogContent className="max-w-4xl w-[95vw]">
+            {previewFile && (
+              <div className="space-y-4">
+                <DialogHeader>
+                  <DialogTitle className="flex items-center gap-2">
+                    {getFileIcon(previewFile.file_type)}
+                    {previewFile.file_name}
+                  </DialogTitle>
+                </DialogHeader>
+                {renderPreviewContent(previewFile)}
+                {previewFile.description && (
+                  <p className="text-sm text-muted-foreground">{previewFile.description}</p>
+                )}
+                <div className="flex justify-end gap-2">
+                  <a href={previewFile.file_url} target="_blank" rel="noopener noreferrer" download>
+                    <Button variant="outline" size="sm">
+                      <Download className="mr-2 h-4 w-4" /> Descarregar
+                    </Button>
+                  </a>
+                </div>
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
 
         {/* Assign Dialog */}
         <Dialog open={assignOpen} onOpenChange={setAssignOpen}>
