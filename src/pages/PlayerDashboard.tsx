@@ -3,8 +3,10 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { FileText, ClipboardList, TrendingUp, ListChecks } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { FileText, ClipboardList, TrendingUp, ListChecks, BarChart3 } from "lucide-react";
 import { Link } from "react-router-dom";
+import PlayerStatsView from "@/components/stats/PlayerStatsView";
 import { format, startOfWeek } from "date-fns";
 import { pt } from "date-fns/locale";
 
@@ -87,7 +89,7 @@ const PlayerDashboard = () => {
   const pendingCustom = customAssignments.filter((a) => !a.completed_at);
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-foreground">
           Olá, {profile?.full_name || "Jogador"}
@@ -97,113 +99,126 @@ const PlayerDashboard = () => {
         </p>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-3">
-        <Link to="/questionnaire">
-          <Card className={`cursor-pointer transition-all hover:border-primary/50 ${hasPendingQuestionnaire ? 'border-primary/30' : ''}`}>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Questionário</CardTitle>
-              <ClipboardList className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              {hasPendingQuestionnaire ? (
-                <Badge variant="default" className="bg-primary text-primary-foreground">Pendente</Badge>
-              ) : (
-                <Badge variant="secondary">Respondido</Badge>
-              )}
-              <p className="mt-2 text-xs text-muted-foreground">Questionário semanal</p>
-            </CardContent>
-          </Card>
-        </Link>
+      <Tabs defaultValue="overview">
+        <TabsList>
+          <TabsTrigger value="overview">Resumo</TabsTrigger>
+          <TabsTrigger value="stats" className="flex items-center gap-1">
+            <BarChart3 className="h-3.5 w-3.5" /> Estatísticas
+          </TabsTrigger>
+        </TabsList>
 
-        <Link to="/reports">
-          <Card className="cursor-pointer transition-all hover:border-primary/50">
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Relatórios</CardTitle>
-              <FileText className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <p className="text-2xl font-bold text-foreground">{reportCount}</p>
-              <p className="mt-1 text-xs text-muted-foreground">Total de relatórios</p>
-            </CardContent>
-          </Card>
-        </Link>
+        <TabsContent value="overview" className="space-y-8 mt-6">
+          <div className="grid gap-6 md:grid-cols-3">
+            <Link to="/questionnaire">
+              <Card className={`cursor-pointer transition-all hover:border-primary/50 ${hasPendingQuestionnaire ? 'border-primary/30' : ''}`}>
+                <CardHeader className="flex flex-row items-center justify-between pb-2">
+                  <CardTitle className="text-sm font-medium text-muted-foreground">Questionário</CardTitle>
+                  <ClipboardList className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  {hasPendingQuestionnaire ? (
+                    <Badge variant="default" className="bg-primary text-primary-foreground">Pendente</Badge>
+                  ) : (
+                    <Badge variant="secondary">Respondido</Badge>
+                  )}
+                  <p className="mt-2 text-xs text-muted-foreground">Questionário semanal</p>
+                </CardContent>
+              </Card>
+            </Link>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Última Avaliação</CardTitle>
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            {lastReport ? (
-              <>
-                <p className="text-2xl font-bold text-foreground">{lastReport.technical_score}/10</p>
-                <p className="mt-1 text-xs text-muted-foreground">Nota técnica</p>
-              </>
-            ) : (
-              <p className="text-sm text-muted-foreground">Sem dados</p>
-            )}
-          </CardContent>
-        </Card>
-      </div>
+            <Link to="/reports">
+              <Card className="cursor-pointer transition-all hover:border-primary/50">
+                <CardHeader className="flex flex-row items-center justify-between pb-2">
+                  <CardTitle className="text-sm font-medium text-muted-foreground">Relatórios</CardTitle>
+                  <FileText className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <p className="text-2xl font-bold text-foreground">{reportCount}</p>
+                  <p className="mt-1 text-xs text-muted-foreground">Total de relatórios</p>
+                </CardContent>
+              </Card>
+            </Link>
 
-      {/* Custom Questionnaires */}
-      {customAssignments.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
-              <ListChecks className="h-5 w-5" />
-              Questionários do Treinador
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            {customAssignments.map((a) => (
-              <Link key={a.id} to={`/answer-questionnaire/${a.id}`}>
-                <div className="flex items-center justify-between rounded-md bg-secondary p-4 hover:bg-accent transition-colors cursor-pointer">
-                  <div>
-                    <p className="text-sm font-medium text-foreground">{a.title}</p>
-                    <p className="text-xs text-muted-foreground">
-                      {format(new Date(a.created_at), "d MMM yyyy", { locale: pt })}
-                    </p>
-                  </div>
-                  <Badge variant={a.completed_at ? "secondary" : "default"}>
-                    {a.completed_at ? "Respondido" : "Pendente"}
-                  </Badge>
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between pb-2">
+                <CardTitle className="text-sm font-medium text-muted-foreground">Última Avaliação</CardTitle>
+                <TrendingUp className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                {lastReport ? (
+                  <>
+                    <p className="text-2xl font-bold text-foreground">{lastReport.technical_score}/10</p>
+                    <p className="mt-1 text-xs text-muted-foreground">Nota técnica</p>
+                  </>
+                ) : (
+                  <p className="text-sm text-muted-foreground">Sem dados</p>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+
+          {customAssignments.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <ListChecks className="h-5 w-5" />
+                  Questionários do Treinador
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {customAssignments.map((a) => (
+                  <Link key={a.id} to={`/answer-questionnaire/${a.id}`}>
+                    <div className="flex items-center justify-between rounded-md bg-secondary p-4 hover:bg-accent transition-colors cursor-pointer">
+                      <div>
+                        <p className="text-sm font-medium text-foreground">{a.title}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {format(new Date(a.created_at), "d MMM yyyy", { locale: pt })}
+                        </p>
+                      </div>
+                      <Badge variant={a.completed_at ? "secondary" : "default"}>
+                        {a.completed_at ? "Respondido" : "Pendente"}
+                      </Badge>
+                    </div>
+                  </Link>
+                ))}
+              </CardContent>
+            </Card>
+          )}
+
+          {lastReport && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Último Relatório</CardTitle>
+                <p className="text-sm text-muted-foreground">
+                  {format(new Date(lastReport.created_at), "d 'de' MMMM, yyyy", { locale: pt })}
+                </p>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Objetivo</p>
+                  <p className="text-sm text-foreground">{lastReport.objective}</p>
                 </div>
-              </Link>
-            ))}
-          </CardContent>
-        </Card>
-      )}
+                {lastReport.strengths && (
+                  <div>
+                    <p className="text-sm font-medium text-muted-foreground">Pontos Fortes</p>
+                    <p className="text-sm text-foreground">{lastReport.strengths}</p>
+                  </div>
+                )}
+                {lastReport.improvements && (
+                  <div>
+                    <p className="text-sm font-medium text-muted-foreground">A Melhorar</p>
+                    <p className="text-sm text-foreground">{lastReport.improvements}</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          )}
+        </TabsContent>
 
-      {/* Latest Report */}
-      {lastReport && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Último Relatório</CardTitle>
-            <p className="text-sm text-muted-foreground">
-              {format(new Date(lastReport.created_at), "d 'de' MMMM, yyyy", { locale: pt })}
-            </p>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <div>
-              <p className="text-sm font-medium text-muted-foreground">Objetivo</p>
-              <p className="text-sm text-foreground">{lastReport.objective}</p>
-            </div>
-            {lastReport.strengths && (
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Pontos Fortes</p>
-                <p className="text-sm text-foreground">{lastReport.strengths}</p>
-              </div>
-            )}
-            {lastReport.improvements && (
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">A Melhorar</p>
-                <p className="text-sm text-foreground">{lastReport.improvements}</p>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      )}
+        <TabsContent value="stats" className="mt-6">
+          <PlayerStatsView />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
