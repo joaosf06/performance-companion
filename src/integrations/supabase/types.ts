@@ -14,6 +14,53 @@ export type Database = {
   }
   public: {
     Tables: {
+      athlete_stats: {
+        Row: {
+          athlete_id: string
+          body_zone: string | null
+          category: string
+          coach_id: string
+          created_at: string
+          id: string
+          metric_name: string
+          metric_value: number
+          season_id: string
+          updated_at: string
+        }
+        Insert: {
+          athlete_id: string
+          body_zone?: string | null
+          category?: string
+          coach_id: string
+          created_at?: string
+          id?: string
+          metric_name: string
+          metric_value?: number
+          season_id: string
+          updated_at?: string
+        }
+        Update: {
+          athlete_id?: string
+          body_zone?: string | null
+          category?: string
+          coach_id?: string
+          created_at?: string
+          id?: string
+          metric_name?: string
+          metric_value?: number
+          season_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "athlete_stats_season_id_fkey"
+            columns: ["season_id"]
+            isOneToOne: false
+            referencedRelation: "seasons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       coach_athletes: {
         Row: {
           athlete_id: string
@@ -379,6 +426,27 @@ export type Database = {
           short_id?: string | null
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      seasons: {
+        Row: {
+          coach_id: string
+          created_at: string
+          id: string
+          name: string
+        }
+        Insert: {
+          coach_id: string
+          created_at?: string
+          id?: string
+          name: string
+        }
+        Update: {
+          coach_id?: string
+          created_at?: string
+          id?: string
+          name?: string
         }
         Relationships: []
       }
