@@ -26,7 +26,7 @@ const PREDEFINED_CATEGORIES = [
 ];
 
 const BODY_ZONE_OPTIONS = [
-  { value: "", label: "Nenhuma" },
+  { value: "none", label: "Nenhuma" },
   { value: "head", label: "Cabeça" },
   { value: "chest", label: "Peito" },
   { value: "left_arm", label: "Braço Esquerdo" },
