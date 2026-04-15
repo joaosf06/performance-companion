@@ -155,7 +155,7 @@ const CoachStatsManager = ({ athleteId, athleteName }: CoachStatsManagerProps) =
           metric_name: stat.metric_name,
           metric_value: stat.metric_value,
           category: stat.category,
-          body_zone: stat.body_zone || null,
+          body_zone: stat.body_zone && stat.body_zone !== "none" ? stat.body_zone : null,
         };
 
         if (stat.id) {
