@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, lazy, Suspense } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -6,9 +6,10 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { FileText, ClipboardList, TrendingUp, ListChecks, BarChart3 } from "lucide-react";
 import { Link } from "react-router-dom";
-import PlayerStatsView from "@/components/stats/PlayerStatsView";
 import { format, startOfWeek } from "date-fns";
 import { pt } from "date-fns/locale";
+
+const PlayerStatsView = lazy(() => import("@/components/stats/PlayerStatsView"));
 
 interface CustomAssignment {
   id: string;
@@ -216,7 +217,9 @@ const PlayerDashboard = () => {
         </TabsContent>
 
         <TabsContent value="stats" className="mt-6">
-          <PlayerStatsView />
+          <Suspense fallback={<p className="text-sm text-muted-foreground">A carregar estatísticas...</p>}>
+            <PlayerStatsView />
+          </Suspense>
         </TabsContent>
       </Tabs>
     </div>
