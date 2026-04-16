@@ -10,7 +10,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Badge } from "@/components/ui/badge";
 import { Plus, Trash2, BarChart3, Save } from "lucide-react";
 import { toast } from "sonner";
-import { ZONE_LABELS } from "./InteractiveBody";
 
 const PREDEFINED_CATEGORIES = [
   { value: "goals", label: "Golos" },
@@ -201,8 +200,15 @@ const CoachStatsManager = ({ athleteId, athleteName }: CoachStatsManagerProps) =
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
-        {!selectedSeason ? (
-          <p className="text-sm text-muted-foreground">Cria uma época para começar a adicionar métricas.</p>
+        {seasons.length === 0 ? (
+          <div className="text-center py-6 space-y-3">
+            <p className="text-sm text-muted-foreground">Ainda não tens épocas criadas.</p>
+            <Button size="sm" onClick={() => setNewSeasonOpen(true)}>
+              <Plus className="mr-1 h-4 w-4" /> Criar Primeira Época
+            </Button>
+          </div>
+        ) : !selectedSeason ? (
+          <p className="text-sm text-muted-foreground">Seleciona uma época.</p>
         ) : loading ? (
           <p className="text-sm text-muted-foreground">A carregar...</p>
         ) : (
