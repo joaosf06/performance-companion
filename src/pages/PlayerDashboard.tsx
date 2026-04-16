@@ -80,12 +80,7 @@ const PlayerDashboard = () => {
     fetchData();
   }, [user]);
 
-  const [shortId, setShortId] = useState<string>("");
-  useEffect(() => {
-    if (!user) return;
-    supabase.from("profiles").select("short_id").eq("user_id", user.id).maybeSingle()
-      .then(({ data }) => { if (data?.short_id) setShortId(data.short_id); });
-  }, [user]);
+  const shortId = profile?.short_id ?? "";
 
   const pendingCustom = customAssignments.filter((a) => !a.completed_at);
 
