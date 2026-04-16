@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, lazy, Suspense } from "react";
 import { useParams, Navigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -8,7 +8,8 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { format } from "date-fns";
 import { pt } from "date-fns/locale";
-import CoachStatsManager from "@/components/stats/CoachStatsManager";
+
+const CoachStatsManager = lazy(() => import("@/components/stats/CoachStatsManager"));
 
 const AthleteProfile = () => {
   const { athleteId } = useParams<{ athleteId: string }>();
@@ -109,10 +110,12 @@ const AthleteProfile = () => {
 
           <TabsContent value="stats" className="mt-6">
             {athleteId && (
-              <CoachStatsManager
-                athleteId={athleteId}
-                athleteName={profile?.full_name || "Atleta"}
-              />
+              <Suspense fallback={<p className="text-sm text-muted-foreground">A carregar estatísticas...</p>}>
+                <CoachStatsManager
+                  athleteId={athleteId}
+                  athleteName={profile?.full_name || "Atleta"}
+                />
+              </Suspense>
             )}
           </TabsContent>
         </Tabs>
