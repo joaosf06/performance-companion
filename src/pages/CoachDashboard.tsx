@@ -28,41 +28,48 @@ const CoachDashboard = () => {
     if (!user) return;
 
     const fetchData = async () => {
-      const { data: athletes, count } = await supabase
-        .from("coach_athletes")
-        .select("athlete_id", { count: "exact" })
-        .eq("coach_id", user.id);
-      setAthleteCount(count || 0);
+      const [{ data: athletes, count }, { count: rCount }] = await Promise.all([
+        supabase
+          .from("coach_athletes")
+          .select("athlete_id", { count: "exact" })
+          .eq("coach_id", user.id),
+        supabase
+          .from("training_reports")
+          .select("*", { count: "exact", head: true })
+          .eq("coach_id", user.id),
+      ]);
 
-      const { count: rCount } = await supabase
-        .from("training_reports")
-        .select("*", { count: "exact", head: true })
-        .eq("coach_id", user.id);
+      setAthleteCount(count || 0);
       setReportCount(rCount || 0);
 
-      if (athletes && athletes.length > 0) {
-        const athleteIds = athletes.map((a) => a.athlete_id);
-        const weekStart = startOfWeek(new Date(), { weekStartsOn: 1 });
-        const weekStartStr = format(weekStart, "yyyy-MM-dd");
+      if (!athletes || athletes.length === 0) {
+        setPendingAlerts(0);
+        setRecentAthletes([]);
+        return;
+      }
 
-        const { data: answered } = await supabase
+      const athleteIds = athletes.map((a) => a.athlete_id);
+      const weekStart = startOfWeek(new Date(), { weekStartsOn: 1 });
+      const weekStartStr = format(weekStart, "yyyy-MM-dd");
+
+      const [{ data: answered }, { data: profiles }] = await Promise.all([
+        supabase
           .from("weekly_questionnaires")
           .select("player_id")
           .in("player_id", athleteIds)
-          .eq("week_start", weekStartStr);
-
-        const answeredIds = new Set((answered || []).map((q) => q.player_id));
-        setPendingAlerts(athleteIds.filter((id) => !answeredIds.has(id)).length);
-
-        const { data: profiles } = await supabase
+          .eq("week_start", weekStartStr),
+        supabase
           .from("profiles")
           .select("user_id, full_name")
-          .in("user_id", athleteIds.slice(0, 5));
-        setRecentAthletes(profiles || []);
-      }
+          .in("user_id", athleteIds.slice(0, 5)),
+      ]);
+
+      const answeredIds = new Set((answered || []).map((q) => q.player_id));
+      setPendingAlerts(athleteIds.filter((id) => !answeredIds.has(id)).length);
+      setRecentAthletes(profiles || []);
     };
 
-    fetchData();
+    void fetchData();
   }, [user]);
 
   const handleUpgrade = async () => {

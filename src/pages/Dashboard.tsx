@@ -1,9 +1,11 @@
+import { lazy, Suspense } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Navigate } from "react-router-dom";
 import Layout from "@/components/Layout";
-import PlayerDashboard from "./PlayerDashboard";
-import CoachDashboard from "./CoachDashboard";
 import { Skeleton } from "@/components/ui/skeleton";
+
+const PlayerDashboard = lazy(() => import("./PlayerDashboard"));
+const CoachDashboard = lazy(() => import("./CoachDashboard"));
 
 const DashboardSkeleton = () => (
   <div className="space-y-6 p-6">
@@ -32,18 +34,13 @@ const Dashboard = () => {
     return <Navigate to="/auth" replace />;
   }
 
-  // Role still loading (edge case) — show skeleton inside layout
-  if (!role) {
-    return (
-      <Layout>
-        <DashboardSkeleton />
-      </Layout>
-    );
-  }
+  const ActiveDashboard = role === "coach" ? CoachDashboard : PlayerDashboard;
 
   return (
     <Layout>
-      {role === "coach" ? <CoachDashboard /> : <PlayerDashboard />}
+      <Suspense fallback={<DashboardSkeleton />}>
+        <ActiveDashboard />
+      </Suspense>
     </Layout>
   );
 };
