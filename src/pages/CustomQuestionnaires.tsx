@@ -73,6 +73,8 @@ const CustomQuestionnaires = () => {
   const [assignments, setAssignments] = useState<any[]>([]);
   const [attachments, setAttachments] = useState<{ name: string; url: string; type: string }[]>([]);
   const [uploadingAttachment, setUploadingAttachment] = useState(false);
+  const [recurrenceDialogOpen, setRecurrenceDialogOpen] = useState(false);
+  const [recurrenceQuestionnaireId, setRecurrenceQuestionnaireId] = useState<string | null>(null);
   const attachmentInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
