@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, lazy, Suspense } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import Layout from "@/components/Layout";
@@ -11,11 +11,14 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { Navigate } from "react-router-dom";
 import { Plus, Trash2, Send, Eye, GripVertical, Paperclip, X } from "lucide-react";
 import { format } from "date-fns";
 import { pt } from "date-fns/locale";
+
+const QuestionnaireResults = lazy(() => import("@/components/questionnaires/QuestionnaireResults"));
 
 interface Field {
   id?: string;
