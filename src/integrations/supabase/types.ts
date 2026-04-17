@@ -204,6 +204,11 @@ export type Database = {
           created_at: string
           description: string | null
           id: string
+          next_run_at: string | null
+          recurrence: string
+          recurrence_active: boolean
+          recurrence_day: number | null
+          recurrence_hour: number
           title: string
         }
         Insert: {
@@ -212,6 +217,11 @@ export type Database = {
           created_at?: string
           description?: string | null
           id?: string
+          next_run_at?: string | null
+          recurrence?: string
+          recurrence_active?: boolean
+          recurrence_day?: number | null
+          recurrence_hour?: number
           title: string
         }
         Update: {
@@ -220,6 +230,11 @@ export type Database = {
           created_at?: string
           description?: string | null
           id?: string
+          next_run_at?: string | null
+          recurrence?: string
+          recurrence_active?: boolean
+          recurrence_day?: number | null
+          recurrence_hour?: number
           title?: string
         }
         Relationships: []
@@ -428,6 +443,35 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      questionnaire_recurrence_athletes: {
+        Row: {
+          athlete_id: string
+          created_at: string
+          id: string
+          questionnaire_id: string
+        }
+        Insert: {
+          athlete_id: string
+          created_at?: string
+          id?: string
+          questionnaire_id: string
+        }
+        Update: {
+          athlete_id?: string
+          created_at?: string
+          id?: string
+          questionnaire_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "questionnaire_recurrence_athletes_questionnaire_id_fkey"
+            columns: ["questionnaire_id"]
+            isOneToOne: false
+            referencedRelation: "custom_questionnaires"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       seasons: {
         Row: {

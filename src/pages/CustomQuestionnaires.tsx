@@ -14,11 +14,12 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { Navigate } from "react-router-dom";
-import { Plus, Trash2, Send, Eye, GripVertical, Paperclip, X } from "lucide-react";
+import { Plus, Trash2, Send, Eye, GripVertical, Paperclip, X, Repeat } from "lucide-react";
 import { format } from "date-fns";
 import { pt } from "date-fns/locale";
 
 const QuestionnaireResults = lazy(() => import("@/components/questionnaires/QuestionnaireResults"));
+const QuestionnaireRecurrenceDialog = lazy(() => import("@/components/questionnaires/QuestionnaireRecurrenceDialog"));
 
 interface Field {
   id?: string;
@@ -33,6 +34,9 @@ interface Questionnaire {
   title: string;
   description: string | null;
   created_at: string;
+  recurrence?: string;
+  recurrence_active?: boolean;
+  next_run_at?: string | null;
   fields?: Field[];
 }
 
@@ -69,6 +73,8 @@ const CustomQuestionnaires = () => {
   const [assignments, setAssignments] = useState<any[]>([]);
   const [attachments, setAttachments] = useState<{ name: string; url: string; type: string }[]>([]);
   const [uploadingAttachment, setUploadingAttachment] = useState(false);
+  const [recurrenceDialogOpen, setRecurrenceDialogOpen] = useState(false);
+  const [recurrenceQuestionnaireId, setRecurrenceQuestionnaireId] = useState<string | null>(null);
   const attachmentInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -419,13 +425,24 @@ const CustomQuestionnaires = () => {
             {questionnaires.map((q) => (
               <Card key={q.id}>
                 <CardContent className="flex items-center justify-between py-4">
-                  <div>
-                    <p className="text-sm font-medium text-foreground">{q.title}</p>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <p className="text-sm font-medium text-foreground">{q.title}</p>
+                      {q.recurrence_active && q.recurrence && q.recurrence !== "none" && (
+                        <Badge variant="default" className="text-xs">
+                          <Repeat className="mr-1 h-3 w-3" />
+                          {q.recurrence === "daily" ? "Diário" : q.recurrence === "weekly" ? "Semanal" : "Mensal"}
+                        </Badge>
+                      )}
+                    </div>
                     {q.description && (
                       <p className="text-xs text-muted-foreground mt-1">{q.description}</p>
                     )}
                     <p className="text-xs text-muted-foreground mt-1">
                       {format(new Date(q.created_at), "d MMM yyyy", { locale: pt })}
+                      {q.recurrence_active && q.next_run_at && (
+                        <span className="ml-2">· Próximo envio: {format(new Date(q.next_run_at), "d MMM HH:mm", { locale: pt })}</span>
+                      )}
                     </p>
                   </div>
                   <div className="flex gap-2">
@@ -434,6 +451,16 @@ const CustomQuestionnaires = () => {
                     </Button>
                     <Button variant="outline" size="sm" onClick={() => openAssignDialog(q.id)}>
                       <Send className="mr-1 h-3 w-3" /> Atribuir
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        setRecurrenceQuestionnaireId(q.id);
+                        setRecurrenceDialogOpen(true);
+                      }}
+                    >
+                      <Repeat className="mr-1 h-3 w-3" /> Recorrência
                     </Button>
                     <Button variant="ghost" size="icon" onClick={() => deleteQuestionnaire(q.id)}>
                       <Trash2 className="h-4 w-4 text-destructive" />
@@ -530,6 +557,18 @@ const CustomQuestionnaires = () => {
             )}
           </DialogContent>
         </Dialog>
+
+        <Suspense fallback={null}>
+          <QuestionnaireRecurrenceDialog
+            open={recurrenceDialogOpen}
+            onOpenChange={(o) => {
+              setRecurrenceDialogOpen(o);
+              if (!o) fetchAll();
+            }}
+            questionnaireId={recurrenceQuestionnaireId}
+            athletes={athletes}
+          />
+        </Suspense>
       </div>
     </Layout>
   );
