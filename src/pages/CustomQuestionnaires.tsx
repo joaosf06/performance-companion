@@ -34,6 +34,9 @@ interface Questionnaire {
   title: string;
   description: string | null;
   created_at: string;
+  recurrence?: string;
+  recurrence_active?: boolean;
+  next_run_at?: string | null;
   fields?: Field[];
 }
 
