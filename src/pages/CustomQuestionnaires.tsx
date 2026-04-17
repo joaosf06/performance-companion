@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, lazy, Suspense } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import Layout from "@/components/Layout";
@@ -11,11 +11,14 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { Navigate } from "react-router-dom";
 import { Plus, Trash2, Send, Eye, GripVertical, Paperclip, X } from "lucide-react";
 import { format } from "date-fns";
 import { pt } from "date-fns/locale";
+
+const QuestionnaireResults = lazy(() => import("@/components/questionnaires/QuestionnaireResults"));
 
 interface Field {
   id?: string;
@@ -241,18 +244,26 @@ const CustomQuestionnaires = () => {
   return (
     <Layout>
       <div className="space-y-8">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-foreground">Questionários Personalizados</h1>
-            <p className="text-muted-foreground mt-1">Cria e atribui questionários aos teus atletas.</p>
-          </div>
-          <Button onClick={() => setCreating(!creating)}>
-            <Plus className="mr-2 h-4 w-4" />
-            {creating ? "Cancelar" : "Novo Questionário"}
-          </Button>
+        <div>
+          <h1 className="text-2xl font-bold text-foreground">Questionários Personalizados</h1>
+          <p className="text-muted-foreground mt-1">Cria, atribui e analisa os resultados dos teus atletas.</p>
         </div>
 
-        {creating && (
+        <Tabs defaultValue="manage">
+          <TabsList>
+            <TabsTrigger value="manage">Gerir</TabsTrigger>
+            <TabsTrigger value="results">Resultados</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="manage" className="mt-6 space-y-6">
+            <div className="flex justify-end">
+              <Button onClick={() => setCreating(!creating)}>
+                <Plus className="mr-2 h-4 w-4" />
+                {creating ? "Cancelar" : "Novo Questionário"}
+              </Button>
+            </div>
+
+            {creating && (
           <Card>
             <CardHeader>
               <CardTitle className="text-lg">Criar Questionário</CardTitle>
@@ -433,6 +444,14 @@ const CustomQuestionnaires = () => {
             ))}
           </div>
         )}
+          </TabsContent>
+
+          <TabsContent value="results" className="mt-6">
+            <Suspense fallback={<p className="text-sm text-muted-foreground">A carregar resultados...</p>}>
+              <QuestionnaireResults />
+            </Suspense>
+          </TabsContent>
+        </Tabs>
 
         {/* Assign Dialog */}
         <Dialog open={assignDialogOpen} onOpenChange={setAssignDialogOpen}>
