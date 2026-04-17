@@ -14,11 +14,12 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { Navigate } from "react-router-dom";
-import { Plus, Trash2, Send, Eye, GripVertical, Paperclip, X } from "lucide-react";
+import { Plus, Trash2, Send, Eye, GripVertical, Paperclip, X, Repeat } from "lucide-react";
 import { format } from "date-fns";
 import { pt } from "date-fns/locale";
 
 const QuestionnaireResults = lazy(() => import("@/components/questionnaires/QuestionnaireResults"));
+const QuestionnaireRecurrenceDialog = lazy(() => import("@/components/questionnaires/QuestionnaireRecurrenceDialog"));
 
 interface Field {
   id?: string;
