@@ -244,18 +244,26 @@ const CustomQuestionnaires = () => {
   return (
     <Layout>
       <div className="space-y-8">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-foreground">Questionários Personalizados</h1>
-            <p className="text-muted-foreground mt-1">Cria e atribui questionários aos teus atletas.</p>
-          </div>
-          <Button onClick={() => setCreating(!creating)}>
-            <Plus className="mr-2 h-4 w-4" />
-            {creating ? "Cancelar" : "Novo Questionário"}
-          </Button>
+        <div>
+          <h1 className="text-2xl font-bold text-foreground">Questionários Personalizados</h1>
+          <p className="text-muted-foreground mt-1">Cria, atribui e analisa os resultados dos teus atletas.</p>
         </div>
 
-        {creating && (
+        <Tabs defaultValue="manage">
+          <TabsList>
+            <TabsTrigger value="manage">Gerir</TabsTrigger>
+            <TabsTrigger value="results">Resultados</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="manage" className="mt-6 space-y-6">
+            <div className="flex justify-end">
+              <Button onClick={() => setCreating(!creating)}>
+                <Plus className="mr-2 h-4 w-4" />
+                {creating ? "Cancelar" : "Novo Questionário"}
+              </Button>
+            </div>
+
+            {creating && (
           <Card>
             <CardHeader>
               <CardTitle className="text-lg">Criar Questionário</CardTitle>
