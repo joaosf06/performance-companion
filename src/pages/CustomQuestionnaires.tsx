@@ -444,6 +444,14 @@ const CustomQuestionnaires = () => {
             ))}
           </div>
         )}
+          </TabsContent>
+
+          <TabsContent value="results" className="mt-6">
+            <Suspense fallback={<p className="text-sm text-muted-foreground">A carregar resultados...</p>}>
+              <QuestionnaireResults />
+            </Suspense>
+          </TabsContent>
+        </Tabs>
 
         {/* Assign Dialog */}
         <Dialog open={assignDialogOpen} onOpenChange={setAssignDialogOpen}>
