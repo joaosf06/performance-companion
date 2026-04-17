@@ -557,6 +557,18 @@ const CustomQuestionnaires = () => {
             )}
           </DialogContent>
         </Dialog>
+
+        <Suspense fallback={null}>
+          <QuestionnaireRecurrenceDialog
+            open={recurrenceDialogOpen}
+            onOpenChange={(o) => {
+              setRecurrenceDialogOpen(o);
+              if (!o) fetchAll();
+            }}
+            questionnaireId={recurrenceQuestionnaireId}
+            athletes={athletes}
+          />
+        </Suspense>
       </div>
     </Layout>
   );
