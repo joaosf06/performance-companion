@@ -10,8 +10,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Badge } from "@/components/ui/badge";
-import { Paperclip } from "lucide-react";
 import { toast } from "sonner";
+import InlineFilePreview from "@/components/InlineFilePreview";
 
 interface Field {
   id: string;
@@ -166,16 +166,13 @@ const AnswerQuestionnaire = () => {
           )}
         </div>
 
-        {/* Attachments from coach */}
+        {/* Attachments from coach - rendered inline */}
         {attachments.length > 0 && (
           <Card>
             <CardHeader><CardTitle className="text-sm">Anexos do treinador</CardTitle></CardHeader>
-            <CardContent className="space-y-2">
+            <CardContent className="space-y-4">
               {attachments.map((att: any, i: number) => (
-                <a key={i} href={att.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 rounded-md bg-secondary p-3 hover:bg-accent transition-colors">
-                  <Paperclip className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-sm text-foreground">{att.name}</span>
-                </a>
+                <InlineFilePreview key={i} url={att.url} name={att.name} mimeType={att.type} />
               ))}
             </CardContent>
           </Card>
@@ -234,10 +231,14 @@ const AnswerQuestionnaire = () => {
                 )}
 
                 {field.field_type === "file" && (
-                  <div>
-                    {alreadyCompleted && answers[field.id]?.file_url ? (
-                      <a href={answers[field.id].file_url} target="_blank" rel="noopener noreferrer" className="text-sm text-primary underline">Ver ficheiro</a>
-                    ) : !alreadyCompleted ? (
+                  <div className="space-y-2">
+                    {answers[field.id]?.file_url && (
+                      <InlineFilePreview
+                        url={answers[field.id].file_url!}
+                        name={answers[field.id]?.text_value || undefined}
+                      />
+                    )}
+                    {!alreadyCompleted && (
                       <Input
                         type="file"
                         onChange={async (e) => {
@@ -253,8 +254,6 @@ const AnswerQuestionnaire = () => {
                         }}
                         className="bg-background"
                       />
-                    ) : (
-                      <p className="text-sm text-muted-foreground">Sem ficheiro</p>
                     )}
                   </div>
                 )}

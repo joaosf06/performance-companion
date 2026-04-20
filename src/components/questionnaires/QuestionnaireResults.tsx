@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label";
 import { format } from "date-fns";
 import { pt } from "date-fns/locale";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, LineChart, Line, CartesianGrid } from "recharts";
-import { FileText, ImageIcon } from "lucide-react";
+import InlineFilePreview from "@/components/InlineFilePreview";
 
 interface Questionnaire {
   id: string;
@@ -341,9 +341,7 @@ export default function QuestionnaireResults() {
                           <p className="text-xs font-medium text-muted-foreground mb-1">{f.label}</p>
                           {f.field_type === "file" ? (
                             r?.file_url ? (
-                              <a href={r.file_url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-sm text-primary hover:underline">
-                                <FileText className="h-4 w-4" /> Ver ficheiro
-                              </a>
+                              <InlineFilePreview url={r.file_url} name={r.text_value || undefined} maxHeight="max-h-[40vh]" />
                             ) : (
                               <p className="text-sm text-muted-foreground italic">Sem resposta</p>
                             )
