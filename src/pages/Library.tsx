@@ -494,12 +494,15 @@ const Library = () => {
                           isCoach={isCoach}
                           onDelete={deleteFile}
                           onClick={() => setPreviewFile(file)}
-                  />
-                ))}
-              </div>
-            )}
-          </div>
-        )}
+                        />
+                      ))}
+                    </div>
+                  ) : null}
+                </>
+              )}
+            </div>
+          );
+        })()}
 
         {/* File preview dialog */}
         <Dialog open={!!previewFile} onOpenChange={(open) => !open && setPreviewFile(null)}>
