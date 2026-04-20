@@ -82,6 +82,102 @@ export type Database = {
         }
         Relationships: []
       }
+      complementary_workout_items: {
+        Row: {
+          created_at: string
+          exercise_name: string
+          id: string
+          library_file_id: string | null
+          load: string | null
+          notes: string | null
+          reps: string | null
+          rest_seconds: number | null
+          sets: number | null
+          sort_order: number
+          workout_id: string
+        }
+        Insert: {
+          created_at?: string
+          exercise_name: string
+          id?: string
+          library_file_id?: string | null
+          load?: string | null
+          notes?: string | null
+          reps?: string | null
+          rest_seconds?: number | null
+          sets?: number | null
+          sort_order?: number
+          workout_id: string
+        }
+        Update: {
+          created_at?: string
+          exercise_name?: string
+          id?: string
+          library_file_id?: string | null
+          load?: string | null
+          notes?: string | null
+          reps?: string | null
+          rest_seconds?: number | null
+          sets?: number | null
+          sort_order?: number
+          workout_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "complementary_workout_items_library_file_id_fkey"
+            columns: ["library_file_id"]
+            isOneToOne: false
+            referencedRelation: "library_files"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "complementary_workout_items_workout_id_fkey"
+            columns: ["workout_id"]
+            isOneToOne: false
+            referencedRelation: "complementary_workouts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      complementary_workouts: {
+        Row: {
+          athlete_id: string
+          coach_id: string
+          completed_at: string | null
+          created_at: string
+          description: string | null
+          id: string
+          scheduled_date: string | null
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          athlete_id: string
+          coach_id: string
+          completed_at?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          scheduled_date?: string | null
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          athlete_id?: string
+          coach_id?: string
+          completed_at?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          scheduled_date?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       custom_questionnaire_assignments: {
         Row: {
           athlete_id: string
@@ -638,6 +734,10 @@ export type Database = {
         Args: { _athlete_id: string; _questionnaire_id: string }
         Returns: boolean
       }
+      is_assigned_workout: {
+        Args: { _athlete_id: string; _workout_id: string }
+        Returns: boolean
+      }
       is_coach_of_athlete: {
         Args: { _athlete_id: string; _coach_id: string }
         Returns: boolean
@@ -648,6 +748,10 @@ export type Database = {
       }
       owns_questionnaire: {
         Args: { _questionnaire_id: string; _user_id: string }
+        Returns: boolean
+      }
+      owns_workout: {
+        Args: { _user_id: string; _workout_id: string }
         Returns: boolean
       }
     }
