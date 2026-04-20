@@ -19,6 +19,7 @@ const Chat = lazy(() => import("./pages/Chat"));
 const CustomQuestionnaires = lazy(() => import("./pages/CustomQuestionnaires"));
 const Library = lazy(() => import("./pages/Library"));
 const AnswerQuestionnaire = lazy(() => import("./pages/AnswerQuestionnaire"));
+const Workouts = lazy(() => import("./pages/Workouts"));
 
 const queryClient = new QueryClient();
 
@@ -58,6 +59,7 @@ const App = () => (
                 <Route path="/custom-questionnaires" element={<CustomQuestionnaires />} />
                 <Route path="/library" element={<Library />} />
                 <Route path="/answer-questionnaire/:assignmentId" element={<AnswerQuestionnaire />} />
+                <Route path="/workouts" element={<Workouts />} />
               </Route>
               <Route path="/treino-gratis" element={<FreeTrial />} />
               <Route path="*" element={<NotFound />} />
