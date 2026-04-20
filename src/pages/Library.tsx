@@ -10,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
-import { Plus, Trash2, FolderOpen, Upload, FileText, Video, Image, File, Users, Download, X } from "lucide-react";
+import { Plus, Trash2, FolderOpen, Upload, FileText, Video, Image, File, Users, Download, X, ChevronRight, Folder } from "lucide-react";
 import { format } from "date-fns";
 import { pt } from "date-fns/locale";
 
@@ -19,6 +19,7 @@ interface LibFolder {
   name: string;
   description: string | null;
   created_at: string;
+  parent_id: string | null;
 }
 
 interface LibFile {
@@ -126,10 +127,13 @@ const Library = () => {
   const { user, role } = useAuth();
   const isCoach = role === "coach";
   const [folders, setFolders] = useState<LibFolder[]>([]);
-  const [selectedFolder, setSelectedFolder] = useState<LibFolder | null>(null);
+  const [breadcrumb, setBreadcrumb] = useState<LibFolder[]>([]); // path of folders, last = current
   const [files, setFiles] = useState<LibFile[]>([]);
   const [athletes, setAthletes] = useState<Athlete[]>([]);
   const [previewFile, setPreviewFile] = useState<LibFile | null>(null);
+
+  const currentFolder = breadcrumb[breadcrumb.length - 1] ?? null;
+  const currentParentId = currentFolder?.id ?? null;
 
   const [newFolderName, setNewFolderName] = useState("");
   const [newFolderDesc, setNewFolderDesc] = useState("");
@@ -149,6 +153,15 @@ const Library = () => {
     fetchFolders();
     if (isCoach) fetchAthletes();
   }, [user]);
+
+  // Refetch files whenever the current folder changes
+  useEffect(() => {
+    if (currentFolder) {
+      fetchFiles(currentFolder.id);
+    } else {
+      setFiles([]);
+    }
+  }, [currentFolder?.id]);
 
   const fetchFolders = async () => {
     if (!user) return;
@@ -174,8 +187,12 @@ const Library = () => {
   };
 
   const openFolder = (folder: LibFolder) => {
-    setSelectedFolder(folder);
-    fetchFiles(folder.id);
+    setBreadcrumb((prev) => [...prev, folder]);
+  };
+
+  const goToBreadcrumb = (index: number) => {
+    // index = -1 means root
+    setBreadcrumb((prev) => prev.slice(0, index + 1));
   };
 
   const createFolder = async () => {
@@ -184,10 +201,11 @@ const Library = () => {
       coach_id: user.id,
       name: newFolderName.trim(),
       description: newFolderDesc.trim() || null,
+      parent_id: currentParentId,
     });
     if (error) toast.error(error.message);
     else {
-      toast.success("Pasta criada!");
+      toast.success(currentParentId ? "Subpasta criada!" : "Pasta criada!");
       setNewFolderName("");
       setNewFolderDesc("");
       setCreatingFolder(false);
@@ -196,11 +214,14 @@ const Library = () => {
   };
 
   const deleteFolder = async (id: string) => {
+    if (!confirm("Eliminar esta pasta? Subpastas e ficheiros dentro também serão removidos.")) return;
     const { error } = await supabase.from("library_folders").delete().eq("id", id);
     if (error) toast.error(error.message);
     else {
       toast.success("Pasta eliminada");
-      if (selectedFolder?.id === id) { setSelectedFolder(null); setFiles([]); }
+      // If deleted folder is in breadcrumb, navigate up
+      const idx = breadcrumb.findIndex((b) => b.id === id);
+      if (idx !== -1) setBreadcrumb((prev) => prev.slice(0, idx));
       fetchFolders();
     }
   };
