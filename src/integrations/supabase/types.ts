@@ -457,6 +457,7 @@ export type Database = {
           description: string | null
           id: string
           name: string
+          parent_id: string | null
         }
         Insert: {
           coach_id: string
@@ -464,6 +465,7 @@ export type Database = {
           description?: string | null
           id?: string
           name: string
+          parent_id?: string | null
         }
         Update: {
           coach_id?: string
@@ -471,8 +473,17 @@ export type Database = {
           description?: string | null
           id?: string
           name?: string
+          parent_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "library_folders_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "library_folders"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       messages: {
         Row: {
@@ -727,6 +738,10 @@ export type Database = {
         Returns: boolean
       }
       is_assigned_folder: {
+        Args: { _athlete_id: string; _folder_id: string }
+        Returns: boolean
+      }
+      is_assigned_folder_or_ancestor: {
         Args: { _athlete_id: string; _folder_id: string }
         Returns: boolean
       }

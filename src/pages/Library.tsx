@@ -10,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
-import { Plus, Trash2, FolderOpen, Upload, FileText, Video, Image, File, Users, Download, X } from "lucide-react";
+import { Plus, Trash2, FolderOpen, Upload, FileText, Video, Image, File, Users, Download, ChevronRight } from "lucide-react";
 import { format } from "date-fns";
 import { pt } from "date-fns/locale";
 
@@ -19,6 +19,7 @@ interface LibFolder {
   name: string;
   description: string | null;
   created_at: string;
+  parent_id: string | null;
 }
 
 interface LibFile {
@@ -126,10 +127,13 @@ const Library = () => {
   const { user, role } = useAuth();
   const isCoach = role === "coach";
   const [folders, setFolders] = useState<LibFolder[]>([]);
-  const [selectedFolder, setSelectedFolder] = useState<LibFolder | null>(null);
+  const [breadcrumb, setBreadcrumb] = useState<LibFolder[]>([]); // path of folders, last = current
   const [files, setFiles] = useState<LibFile[]>([]);
   const [athletes, setAthletes] = useState<Athlete[]>([]);
   const [previewFile, setPreviewFile] = useState<LibFile | null>(null);
+
+  const currentFolder = breadcrumb[breadcrumb.length - 1] ?? null;
+  const currentParentId = currentFolder?.id ?? null;
 
   const [newFolderName, setNewFolderName] = useState("");
   const [newFolderDesc, setNewFolderDesc] = useState("");
@@ -149,6 +153,15 @@ const Library = () => {
     fetchFolders();
     if (isCoach) fetchAthletes();
   }, [user]);
+
+  // Refetch files whenever the current folder changes
+  useEffect(() => {
+    if (currentFolder) {
+      fetchFiles(currentFolder.id);
+    } else {
+      setFiles([]);
+    }
+  }, [currentFolder?.id]);
 
   const fetchFolders = async () => {
     if (!user) return;
@@ -174,8 +187,12 @@ const Library = () => {
   };
 
   const openFolder = (folder: LibFolder) => {
-    setSelectedFolder(folder);
-    fetchFiles(folder.id);
+    setBreadcrumb((prev) => [...prev, folder]);
+  };
+
+  const goToBreadcrumb = (index: number) => {
+    // index = -1 means root
+    setBreadcrumb((prev) => prev.slice(0, index + 1));
   };
 
   const createFolder = async () => {
@@ -184,10 +201,11 @@ const Library = () => {
       coach_id: user.id,
       name: newFolderName.trim(),
       description: newFolderDesc.trim() || null,
+      parent_id: currentParentId,
     });
     if (error) toast.error(error.message);
     else {
-      toast.success("Pasta criada!");
+      toast.success(currentParentId ? "Subpasta criada!" : "Pasta criada!");
       setNewFolderName("");
       setNewFolderDesc("");
       setCreatingFolder(false);
@@ -196,29 +214,32 @@ const Library = () => {
   };
 
   const deleteFolder = async (id: string) => {
+    if (!confirm("Eliminar esta pasta? Subpastas e ficheiros dentro também serão removidos.")) return;
     const { error } = await supabase.from("library_folders").delete().eq("id", id);
     if (error) toast.error(error.message);
     else {
       toast.success("Pasta eliminada");
-      if (selectedFolder?.id === id) { setSelectedFolder(null); setFiles([]); }
+      // If deleted folder is in breadcrumb, navigate up
+      const idx = breadcrumb.findIndex((b) => b.id === id);
+      if (idx !== -1) setBreadcrumb((prev) => prev.slice(0, idx));
       fetchFolders();
     }
   };
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (!file || !selectedFolder || !user) return;
+    if (!file || !currentFolder || !user) return;
     setUploading(true);
     try {
       const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
-      const path = `${user.id}/${selectedFolder.id}/${Date.now()}_${safeName}`;
+      const path = `${user.id}/${currentFolder.id}/${Date.now()}_${safeName}`;
       const { error: uploadError } = await supabase.storage.from("library-files").upload(path, file);
       if (uploadError) throw uploadError;
 
       const { data: urlData } = supabase.storage.from("library-files").getPublicUrl(path);
 
       const { error: insertError } = await supabase.from("library_files").insert({
-        folder_id: selectedFolder.id,
+        folder_id: currentFolder.id,
         coach_id: user.id,
         file_name: file.name,
         file_url: urlData.publicUrl,
@@ -229,7 +250,7 @@ const Library = () => {
       toast.success("Ficheiro carregado!");
       setFileDescription("");
       if (fileInputRef.current) fileInputRef.current.value = "";
-      fetchFiles(selectedFolder.id);
+      fetchFiles(currentFolder.id);
     } catch (err: any) {
       toast.error(err.message);
     } finally {
@@ -242,7 +263,7 @@ const Library = () => {
     if (error) toast.error(error.message);
     else {
       toast.success("Ficheiro eliminado");
-      if (selectedFolder) fetchFiles(selectedFolder.id);
+      if (currentFolder) fetchFiles(currentFolder.id);
     }
   };
 
@@ -336,128 +357,152 @@ const Library = () => {
           {isCoach && (
             <Button onClick={() => setCreatingFolder(!creatingFolder)}>
               <Plus className="mr-2 h-4 w-4" />
-              {creatingFolder ? "Cancelar" : "Nova Pasta"}
+              {creatingFolder ? "Cancelar" : currentFolder ? "Nova Subpasta" : "Nova Pasta"}
             </Button>
           )}
         </div>
+
+        {/* Breadcrumb */}
+        {breadcrumb.length > 0 && (
+          <nav className="flex items-center flex-wrap gap-1 text-sm">
+            <button
+              onClick={() => goToBreadcrumb(-1)}
+              className="text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Biblioteca
+            </button>
+            {breadcrumb.map((folder, idx) => (
+              <div key={folder.id} className="flex items-center gap-1">
+                <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                <button
+                  onClick={() => goToBreadcrumb(idx)}
+                  className={`hover:text-foreground transition-colors ${idx === breadcrumb.length - 1 ? "text-foreground font-medium" : "text-muted-foreground"}`}
+                >
+                  {folder.name}
+                </button>
+              </div>
+            ))}
+          </nav>
+        )}
 
         {creatingFolder && isCoach && (
           <Card>
             <CardContent className="pt-6 space-y-4">
               <div className="space-y-2">
-                <Label>Nome da Pasta</Label>
+                <Label>{currentFolder ? "Nome da Subpasta" : "Nome da Pasta"}</Label>
                 <Input value={newFolderName} onChange={(e) => setNewFolderName(e.target.value)} placeholder="Ex: Mobilidade" className="bg-background" />
               </div>
               <div className="space-y-2">
                 <Label>Descrição (opcional)</Label>
                 <Textarea value={newFolderDesc} onChange={(e) => setNewFolderDesc(e.target.value)} placeholder="Descrição da pasta..." className="bg-background" />
               </div>
-              <Button onClick={createFolder} disabled={!newFolderName.trim()}>Criar Pasta</Button>
+              <Button onClick={createFolder} disabled={!newFolderName.trim()}>
+                {currentFolder ? "Criar Subpasta" : "Criar Pasta"}
+              </Button>
             </CardContent>
           </Card>
         )}
 
-        {!selectedFolder ? (
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {folders.length === 0 ? (
-              <Card className="col-span-full">
-                <CardContent className="py-8 text-center">
-                  <FolderOpen className="mx-auto h-12 w-12 text-muted-foreground mb-3" />
-                  <p className="text-muted-foreground">
-                    {isCoach ? "Ainda não criaste nenhuma pasta." : "Nenhum material disponível."}
-                  </p>
-                </CardContent>
-              </Card>
-            ) : (
-              folders.map((folder) => (
-                <Card key={folder.id} className="cursor-pointer transition-all hover:border-primary/50" onClick={() => openFolder(folder)}>
-                  <CardContent className="pt-6">
-                    <div className="flex items-start justify-between">
-                      <div className="flex items-center gap-3">
-                        <FolderOpen className="h-8 w-8 text-primary" />
-                        <div>
-                          <p className="font-medium text-foreground">{folder.name}</p>
-                          {folder.description && <p className="text-xs text-muted-foreground mt-1">{folder.description}</p>}
+        {/* Folders at current level */}
+        {(() => {
+          const childFolders = folders.filter((f) => (f.parent_id ?? null) === currentParentId);
+          return (
+            <div className="space-y-4">
+              {childFolders.length > 0 && (
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                  {childFolders.map((folder) => (
+                    <Card key={folder.id} className="cursor-pointer transition-all hover:border-primary/50" onClick={() => openFolder(folder)}>
+                      <CardContent className="pt-6">
+                        <div className="flex items-start justify-between">
+                          <div className="flex items-center gap-3 min-w-0">
+                            <FolderOpen className="h-8 w-8 text-primary shrink-0" />
+                            <div className="min-w-0">
+                              <p className="font-medium text-foreground truncate">{folder.name}</p>
+                              {folder.description && <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{folder.description}</p>}
+                            </div>
+                          </div>
+                          {isCoach && (
+                            <div className="flex gap-1 shrink-0" onClick={(e) => e.stopPropagation()}>
+                              <Button variant="ghost" size="icon" onClick={() => openAssign(folder.id)} title="Partilhar">
+                                <Users className="h-4 w-4 text-muted-foreground" />
+                              </Button>
+                              <Button variant="ghost" size="icon" onClick={() => deleteFolder(folder.id)} title="Eliminar">
+                                <Trash2 className="h-4 w-4 text-destructive" />
+                              </Button>
+                            </div>
+                          )}
                         </div>
-                      </div>
-                      {isCoach && (
-                        <div className="flex gap-1" onClick={(e) => e.stopPropagation()}>
-                          <Button variant="ghost" size="icon" onClick={() => openAssign(folder.id)}>
-                            <Users className="h-4 w-4 text-muted-foreground" />
-                          </Button>
-                          <Button variant="ghost" size="icon" onClick={() => deleteFolder(folder.id)}>
-                            <Trash2 className="h-4 w-4 text-destructive" />
-                          </Button>
-                        </div>
-                      )}
-                    </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              )}
+
+              {!currentFolder && childFolders.length === 0 && (
+                <Card>
+                  <CardContent className="py-8 text-center">
+                    <FolderOpen className="mx-auto h-12 w-12 text-muted-foreground mb-3" />
+                    <p className="text-muted-foreground">
+                      {isCoach ? "Ainda não criaste nenhuma pasta." : "Nenhum material disponível."}
+                    </p>
                   </CardContent>
                 </Card>
-              ))
-            )}
-          </div>
-        ) : (
-          <div className="space-y-6">
-            <div className="flex items-center gap-3">
-              <Button variant="outline" size="sm" onClick={() => { setSelectedFolder(null); setFiles([]); }}>
-                ← Voltar
-              </Button>
-              <div>
-                <h2 className="text-lg font-semibold text-foreground">{selectedFolder.name}</h2>
-                {selectedFolder.description && <p className="text-xs text-muted-foreground">{selectedFolder.description}</p>}
-              </div>
+              )}
+
+              {currentFolder && (
+                <>
+                  {isCoach && (
+                    <Card>
+                      <CardContent className="pt-6 space-y-4">
+                        <Label className="text-sm font-semibold">Carregar Ficheiro</Label>
+                        <div className="space-y-3">
+                          <div className="space-y-2">
+                            <Label className="text-xs text-muted-foreground">Descrição do ficheiro (opcional)</Label>
+                            <Input value={fileDescription} onChange={(e) => setFileDescription(e.target.value)} placeholder="Ex: Exercício de mobilidade para tornozelos" className="bg-background" />
+                          </div>
+                          <div className="flex items-center gap-3">
+                            <input
+                              ref={fileInputRef}
+                              type="file"
+                              accept="image/*,video/*,.pdf,.doc,.docx,.xls,.xlsx"
+                              onChange={handleFileUpload}
+                              className="hidden"
+                              id="library-upload"
+                            />
+                            <Button variant="outline" onClick={() => fileInputRef.current?.click()} disabled={uploading}>
+                              <Upload className="mr-2 h-4 w-4" />
+                              {uploading ? "A carregar..." : "Escolher Ficheiro"}
+                            </Button>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  )}
+
+                  {files.length === 0 && childFolders.length === 0 ? (
+                    <Card>
+                      <CardContent className="py-8 text-center">
+                        <p className="text-muted-foreground">Esta pasta está vazia.</p>
+                      </CardContent>
+                    </Card>
+                  ) : files.length > 0 ? (
+                    <div className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+                      {files.map((file) => (
+                        <FilePreviewCard
+                          key={file.id}
+                          file={file}
+                          isCoach={isCoach}
+                          onDelete={deleteFile}
+                          onClick={() => setPreviewFile(file)}
+                        />
+                      ))}
+                    </div>
+                  ) : null}
+                </>
+              )}
             </div>
-
-            {isCoach && (
-              <Card>
-                <CardContent className="pt-6 space-y-4">
-                  <Label className="text-sm font-semibold">Carregar Ficheiro</Label>
-                  <div className="space-y-3">
-                    <div className="space-y-2">
-                      <Label className="text-xs text-muted-foreground">Descrição do ficheiro (opcional)</Label>
-                      <Input value={fileDescription} onChange={(e) => setFileDescription(e.target.value)} placeholder="Ex: Exercício de mobilidade para tornozelos" className="bg-background" />
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <input
-                        ref={fileInputRef}
-                        type="file"
-                        accept="image/*,video/*,.pdf,.doc,.docx,.xls,.xlsx"
-                        onChange={handleFileUpload}
-                        className="hidden"
-                        id="library-upload"
-                      />
-                      <Button variant="outline" onClick={() => fileInputRef.current?.click()} disabled={uploading}>
-                        <Upload className="mr-2 h-4 w-4" />
-                        {uploading ? "A carregar..." : "Escolher Ficheiro"}
-                      </Button>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-
-            {/* Netflix-style file grid */}
-            {files.length === 0 ? (
-              <Card>
-                <CardContent className="py-8 text-center">
-                  <p className="text-muted-foreground">Esta pasta ainda não tem ficheiros.</p>
-                </CardContent>
-              </Card>
-            ) : (
-              <div className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-                {files.map((file) => (
-                  <FilePreviewCard
-                    key={file.id}
-                    file={file}
-                    isCoach={isCoach}
-                    onDelete={deleteFile}
-                    onClick={() => setPreviewFile(file)}
-                  />
-                ))}
-              </div>
-            )}
-          </div>
-        )}
+          );
+        })()}
 
         {/* File preview dialog */}
         <Dialog open={!!previewFile} onOpenChange={(open) => !open && setPreviewFile(null)}>
