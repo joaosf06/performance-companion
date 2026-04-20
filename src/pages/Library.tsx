@@ -10,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
-import { Plus, Trash2, FolderOpen, Upload, FileText, Video, Image, File, Users, Download, X, ChevronRight, Folder } from "lucide-react";
+import { Plus, Trash2, FolderOpen, Upload, FileText, Video, Image, File, Users, Download, ChevronRight } from "lucide-react";
 import { format } from "date-fns";
 import { pt } from "date-fns/locale";
 
@@ -228,18 +228,18 @@ const Library = () => {
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (!file || !selectedFolder || !user) return;
+    if (!file || !currentFolder || !user) return;
     setUploading(true);
     try {
       const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
-      const path = `${user.id}/${selectedFolder.id}/${Date.now()}_${safeName}`;
+      const path = `${user.id}/${currentFolder.id}/${Date.now()}_${safeName}`;
       const { error: uploadError } = await supabase.storage.from("library-files").upload(path, file);
       if (uploadError) throw uploadError;
 
       const { data: urlData } = supabase.storage.from("library-files").getPublicUrl(path);
 
       const { error: insertError } = await supabase.from("library_files").insert({
-        folder_id: selectedFolder.id,
+        folder_id: currentFolder.id,
         coach_id: user.id,
         file_name: file.name,
         file_url: urlData.publicUrl,
@@ -250,7 +250,7 @@ const Library = () => {
       toast.success("Ficheiro carregado!");
       setFileDescription("");
       if (fileInputRef.current) fileInputRef.current.value = "";
-      fetchFiles(selectedFolder.id);
+      fetchFiles(currentFolder.id);
     } catch (err: any) {
       toast.error(err.message);
     } finally {
@@ -263,7 +263,7 @@ const Library = () => {
     if (error) toast.error(error.message);
     else {
       toast.success("Ficheiro eliminado");
-      if (selectedFolder) fetchFiles(selectedFolder.id);
+      if (currentFolder) fetchFiles(currentFolder.id);
     }
   };
 
