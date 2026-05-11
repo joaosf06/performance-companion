@@ -363,11 +363,15 @@ const CustomQuestionnaires = () => {
                     <input
                       ref={attachmentInputRef}
                       type="file"
-                      accept="image/*,video/*,.pdf,.doc,.docx"
                       className="hidden"
                       onChange={async (e) => {
                         const file = e.target.files?.[0];
                         if (!file || !user) return;
+                        if (file.size > 50 * 1024 * 1024) {
+                          toast.error("Ficheiro demasiado grande (máx. 50 MB).");
+                          if (attachmentInputRef.current) attachmentInputRef.current.value = "";
+                          return;
+                        }
                         setUploadingAttachment(true);
                         try {
                           const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
