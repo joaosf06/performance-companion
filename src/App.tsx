@@ -20,6 +20,7 @@ const CustomQuestionnaires = lazy(() => import("./pages/CustomQuestionnaires"));
 const Library = lazy(() => import("./pages/Library"));
 const AnswerQuestionnaire = lazy(() => import("./pages/AnswerQuestionnaire"));
 const Workouts = lazy(() => import("./pages/Workouts"));
+const Settings = lazy(() => import("./pages/Settings"));
 
 const queryClient = new QueryClient();
 
