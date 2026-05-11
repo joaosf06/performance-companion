@@ -194,10 +194,11 @@ const Index = () => {
 
           <div className="mt-16 mx-auto max-w-3xl rounded-xl border border-border/50 bg-card p-10 text-center">
             <p className="text-muted-foreground leading-relaxed text-base">
-              A Prime11 foi fundada por profissionais do futebol e da tecnologia que identificaram 
-              uma lacuna no mercado: a falta de ferramentas digitais profissionais para o treino individual. 
-              A nossa missão é dar a cada jogador — independentemente do nível — acesso a um acompanhamento 
-              de excelência, com dados, relatórios e comunicação contínua com o treinador.
+              A Prime11 nasceu de um grupo de apaixonados pelo futebol e pela tecnologia, 
+              que identificaram uma lacuna no mercado: a falta de ferramentas digitais dedicadas 
+              ao acompanhamento individual de jogadores. A nossa missão é criar a ponte entre 
+              atletas e treinadores, oferecendo a cada jogador — independentemente do nível — 
+              acesso a dados, relatórios e comunicação contínua que potenciem a sua evolução.
             </p>
           </div>
         </div>
