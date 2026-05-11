@@ -402,7 +402,6 @@ const Chat = () => {
                     ref={fileInputRef}
                     onChange={handleFileUpload}
                     className="hidden"
-                    accept="image/*,video/*,.pdf,.doc,.docx,.xls,.xlsx"
                   />
                   <Button
                     variant="ghost"
