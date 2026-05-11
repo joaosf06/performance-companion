@@ -229,6 +229,11 @@ const Library = () => {
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || !currentFolder || !user) return;
+    if (file.size > 50 * 1024 * 1024) {
+      toast.error("Ficheiro demasiado grande (máx. 50 MB).");
+      if (fileInputRef.current) fileInputRef.current.value = "";
+      return;
+    }
     setUploading(true);
     try {
       const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
