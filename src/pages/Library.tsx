@@ -464,7 +464,6 @@ const Library = () => {
                             <input
                               ref={fileInputRef}
                               type="file"
-                              accept="image/*,video/*,.pdf,.doc,.docx,.xls,.xlsx"
                               onChange={handleFileUpload}
                               className="hidden"
                               id="library-upload"
