@@ -60,10 +60,18 @@ const Layout = ({ children }: { children: ReactNode }) => {
         </nav>
 
         <div className="border-t border-border p-4">
-          <div className="flex items-center gap-3 mb-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-secondary">
-              <User className="h-4 w-4 text-muted-foreground" />
-            </div>
+          <Link
+            to="/settings"
+            className={`flex items-center gap-3 mb-3 rounded-md p-2 transition-colors ${
+              isActive("/settings") ? "bg-secondary" : "hover:bg-secondary/60"
+            }`}
+          >
+            <Avatar className="h-9 w-9">
+              {profile?.avatar_url && <AvatarImage src={profile.avatar_url} alt={profile.full_name} />}
+              <AvatarFallback className="bg-secondary">
+                <User className="h-4 w-4 text-muted-foreground" />
+              </AvatarFallback>
+            </Avatar>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium text-foreground truncate">
                 {profile?.full_name || "Utilizador"}
@@ -72,7 +80,8 @@ const Layout = ({ children }: { children: ReactNode }) => {
                 {role === "coach" ? "Treinador" : "Jogador"}
               </p>
             </div>
-          </div>
+            <SettingsIcon className="h-4 w-4 text-muted-foreground shrink-0" />
+          </Link>
           <Button
             variant="ghost"
             size="sm"
