@@ -211,6 +211,11 @@ const Chat = () => {
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || !user || !selectedContact) return;
+    if (file.size > 50 * 1024 * 1024) {
+      alert("Ficheiro demasiado grande (máx. 50 MB).");
+      if (fileInputRef.current) fileInputRef.current.value = "";
+      return;
+    }
 
     setUploading(true);
     const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
@@ -397,7 +402,6 @@ const Chat = () => {
                     ref={fileInputRef}
                     onChange={handleFileUpload}
                     className="hidden"
-                    accept="image/*,video/*,.pdf,.doc,.docx,.xls,.xlsx"
                   />
                   <Button
                     variant="ghost"

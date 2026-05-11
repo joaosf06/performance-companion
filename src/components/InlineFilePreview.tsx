@@ -64,21 +64,31 @@ const InlineFilePreview = ({ url, name, mimeType, className = "", maxHeight = "m
     );
   }
 
-  // Fallback for unknown types
+  // Fallback for unknown / non-previewable types
   return (
-    <a
-      href={url}
-      target="_blank"
-      rel="noopener noreferrer"
-      className={`flex items-center gap-3 rounded-md border border-border bg-secondary/40 p-3 hover:bg-secondary transition-colors ${className}`}
-    >
+    <div className={`flex items-center gap-3 rounded-md border border-border bg-secondary/40 p-3 ${className}`}>
       <FileText className="h-5 w-5 text-primary shrink-0" />
       <div className="flex-1 min-w-0">
         <p className="text-sm font-medium truncate">{displayName}</p>
-        <p className="text-xs text-muted-foreground">Clica para abrir</p>
+        <p className="text-xs text-muted-foreground">{type || "Ficheiro"}</p>
       </div>
-      <Download className="h-4 w-4 text-muted-foreground" />
-    </a>
+      <a
+        href={url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-xs px-3 py-1.5 rounded-md bg-primary text-primary-foreground hover:opacity-90 transition-opacity"
+      >
+        Abrir
+      </a>
+      <a
+        href={url}
+        download={displayName}
+        className="text-xs px-3 py-1.5 rounded-md border border-border hover:bg-secondary transition-colors inline-flex items-center gap-1"
+      >
+        <Download className="h-3 w-3" />
+        Descarregar
+      </a>
+    </div>
   );
 };
 
