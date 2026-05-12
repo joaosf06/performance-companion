@@ -428,7 +428,7 @@ const CustomQuestionnaires = () => {
           <div className="space-y-3">
             {questionnaires.map((q) => (
               <Card key={q.id}>
-                <CardContent className="flex items-center justify-between py-4">
+                <CardContent className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 py-4">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
                       <p className="text-sm font-medium text-foreground">{q.title}</p>
@@ -449,7 +449,7 @@ const CustomQuestionnaires = () => {
                       )}
                     </p>
                   </div>
-                  <div className="flex gap-2">
+                  <div className="flex gap-2 flex-wrap">
                     <Button variant="outline" size="sm" onClick={() => viewQuestionnaire(q)}>
                       <Eye className="mr-1 h-3 w-3" /> Ver
                     </Button>
