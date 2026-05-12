@@ -168,7 +168,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
       </header>
 
       {/* Main content */}
-      <main className="flex-1 min-w-0 w-full pt-14 md:pt-0 md:ml-16 lg:ml-64 p-4 sm:p-6 lg:p-8">
+      <main className="flex-1 min-w-0 w-full max-w-full overflow-x-hidden pt-14 md:pt-0 md:ml-16 lg:ml-64 p-4 sm:p-6 lg:p-8">
         {children}
       </main>
     </div>
