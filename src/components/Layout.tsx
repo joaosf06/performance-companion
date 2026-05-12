@@ -143,19 +143,19 @@ const Layout = ({ children }: { children: ReactNode }) => {
             </Button>
           </SheetTrigger>
           <SheetContent side="left" className="p-0 w-64 flex flex-col">
-            <div className="flex h-16 items-center px-6 border-b border-border">
+            <Link to="/" onClick={() => setMobileOpen(false)} className="flex h-16 items-center px-6 border-b border-border hover:opacity-80 transition-opacity">
               <h1 className="text-xl font-bold tracking-tight">
                 PRIME<span className="text-primary">11</span>
               </h1>
-            </div>
+            </Link>
             <NavList onNavigate={() => setMobileOpen(false)} />
             <SidebarFooter onNavigate={() => setMobileOpen(false)} />
           </SheetContent>
         </Sheet>
 
-        <h1 className="text-lg font-bold tracking-tight">
+        <Link to="/" className="text-lg font-bold tracking-tight hover:opacity-80 transition-opacity">
           PRIME<span className="text-primary">11</span>
-        </h1>
+        </Link>
 
         <Link to="/settings" aria-label="Conta" className="rounded-full">
           <Avatar className="h-9 w-9">
