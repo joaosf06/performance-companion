@@ -111,12 +111,12 @@ const Layout = ({ children }: { children: ReactNode }) => {
     <div className="flex min-h-screen bg-background">
       {/* Desktop sidebar (collapsed icon-only on md, full on lg) */}
       <aside className="fixed left-0 top-0 z-40 hidden md:flex h-screen w-16 lg:w-64 flex-col border-r border-border bg-card">
-        <div className="flex h-16 items-center justify-center lg:justify-start px-3 lg:px-6 border-b border-border">
+        <Link to="/" className="flex h-16 items-center justify-center lg:justify-start px-3 lg:px-6 border-b border-border hover:opacity-80 transition-opacity">
           <h1 className="text-xl font-bold tracking-tight">
             <span className="lg:hidden text-primary">P11</span>
             <span className="hidden lg:inline">PRIME<span className="text-primary">11</span></span>
           </h1>
-        </div>
+        </Link>
 
         {/* Show compact nav on md, full on lg */}
         <div className="flex-1 overflow-y-auto lg:hidden">
