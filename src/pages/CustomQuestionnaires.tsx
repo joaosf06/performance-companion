@@ -308,8 +308,8 @@ const CustomQuestionnaires = () => {
                       <GripVertical className="h-4 w-4" />
                     </div>
                     <div className="flex-1 space-y-3">
-                      <div className="flex gap-3">
-                        <div className="flex-1">
+                      <div className="flex flex-col sm:flex-row gap-3">
+                        <div className="flex-1 min-w-0">
                           <Input
                             value={field.label}
                             onChange={(e) => updateField(index, { label: e.target.value })}
@@ -321,7 +321,7 @@ const CustomQuestionnaires = () => {
                           value={field.field_type}
                           onValueChange={(v) => updateField(index, { field_type: v })}
                         >
-                          <SelectTrigger className="w-[200px] bg-background">
+                          <SelectTrigger className="w-full sm:w-[200px] bg-background">
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
