@@ -10,11 +10,22 @@ import { toast } from "sonner";
 const Auth = () => {
   const { user } = useAuth();
   const [isLogin, setIsLogin] = useState(true);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [fullName, setFullName] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  // login
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  // signup extras
+  const [fullName, setFullName] = useState("");
+  const [birthDate, setBirthDate] = useState("");
+  const [phone, setPhone] = useState("");
+  const [guardianPhone, setGuardianPhone] = useState("");
+  const [instagram, setInstagram] = useState("");
+  const [position, setPosition] = useState("");
+  const [ageGroup, setAgeGroup] = useState("");
+  const [currentClub, setCurrentClub] = useState("");
 
   if (user) return <Navigate to="/dashboard" replace />;
 
@@ -46,7 +57,19 @@ const Auth = () => {
           });
           if (roleError) throw roleError;
 
-          await supabase.from("profiles").update({ full_name: fullName }).eq("user_id", data.user.id);
+          await supabase
+            .from("profiles")
+            .update({
+              full_name: fullName,
+              birth_date: birthDate || null,
+              phone: phone || null,
+              guardian_phone: guardianPhone || null,
+              instagram: instagram || null,
+              position: position || null,
+              age_group: ageGroup || null,
+              current_club: currentClub || null,
+            })
+            .eq("user_id", data.user.id);
         }
 
         toast.success("Conta criada com sucesso! Confirma o teu email.");
@@ -59,8 +82,10 @@ const Auth = () => {
     }
   };
 
+  const inputCls = "bg-card border-border text-foreground placeholder:text-muted-foreground";
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
+    <div className="flex min-h-screen items-center justify-center bg-background py-10">
       <div className="w-full max-w-md space-y-8 px-6">
         <div className="text-center">
           <h1 className="text-3xl font-bold tracking-tight text-foreground">
@@ -71,48 +96,60 @@ const Auth = () => {
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-5">
+        <form onSubmit={handleSubmit} className="space-y-4">
           {!isLogin && (
-            <div className="space-y-2">
-              <Label htmlFor="name" className="text-foreground">Nome completo</Label>
-              <Input
-                id="name"
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-                required={!isLogin}
-                placeholder="O teu nome"
-                className="bg-card border-border text-foreground placeholder:text-muted-foreground"
-              />
-            </div>
+            <>
+              <div className="space-y-2">
+                <Label htmlFor="name" className="text-foreground">Nome completo</Label>
+                <Input id="name" value={fullName} onChange={(e) => setFullName(e.target.value)} required placeholder="O teu nome" className={inputCls} />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="birth" className="text-foreground">Data de nascimento</Label>
+                <Input id="birth" type="date" value={birthDate} onChange={(e) => setBirthDate(e.target.value)} required className={inputCls} />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="phone" className="text-foreground">Número de telemóvel</Label>
+                <Input id="phone" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} required placeholder="912345678" className={inputCls} />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="gphone" className="text-foreground">Telemóvel do encarregado de educação</Label>
+                <Input id="gphone" type="tel" value={guardianPhone} onChange={(e) => setGuardianPhone(e.target.value)} placeholder="912345678" className={inputCls} />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="instagram" className="text-foreground">Instagram</Label>
+                <Input id="instagram" value={instagram} onChange={(e) => setInstagram(e.target.value)} placeholder="@utilizador" className={inputCls} />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="position" className="text-foreground">Posição</Label>
+                <Input id="position" value={position} onChange={(e) => setPosition(e.target.value)} required placeholder="Ex: Médio" className={inputCls} />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="age_group" className="text-foreground">Escalão</Label>
+                <Input id="age_group" value={ageGroup} onChange={(e) => setAgeGroup(e.target.value)} required placeholder="Ex: Sub-15" className={inputCls} />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="club" className="text-foreground">Clube atual</Label>
+                <Input id="club" value={currentClub} onChange={(e) => setCurrentClub(e.target.value)} required placeholder="Nome do clube" className={inputCls} />
+              </div>
+            </>
           )}
 
           <div className="space-y-2">
             <Label htmlFor="email" className="text-foreground">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              placeholder="email@exemplo.com"
-              className="bg-card border-border text-foreground placeholder:text-muted-foreground"
-            />
+            <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required placeholder="email@exemplo.com" className={inputCls} />
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="password" className="text-foreground">Password</Label>
-            <Input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              minLength={6}
-              placeholder="••••••••"
-              className="bg-card border-border text-foreground placeholder:text-muted-foreground"
-            />
+            <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} placeholder="••••••••" className={inputCls} />
           </div>
-
 
           <Button type="submit" className="w-full" disabled={loading}>
             {loading ? "A processar..." : isLogin ? "Entrar" : "Criar conta"}
@@ -121,10 +158,7 @@ const Auth = () => {
 
         <p className="text-center text-sm text-muted-foreground">
           {isLogin ? "Não tens conta?" : "Já tens conta?"}{" "}
-          <button
-            onClick={() => setIsLogin(!isLogin)}
-            className="text-primary hover:underline font-medium"
-          >
+          <button onClick={() => setIsLogin(!isLogin)} className="text-primary hover:underline font-medium">
             {isLogin ? "Criar conta" : "Entrar"}
           </button>
         </p>
