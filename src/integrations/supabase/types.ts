@@ -523,28 +523,49 @@ export type Database = {
       }
       profiles: {
         Row: {
+          age_group: string | null
           avatar_url: string | null
+          birth_date: string | null
           created_at: string
+          current_club: string | null
           full_name: string
+          guardian_phone: string | null
           id: string
+          instagram: string | null
+          phone: string | null
+          position: string | null
           short_id: string | null
           updated_at: string
           user_id: string
         }
         Insert: {
+          age_group?: string | null
           avatar_url?: string | null
+          birth_date?: string | null
           created_at?: string
+          current_club?: string | null
           full_name?: string
+          guardian_phone?: string | null
           id?: string
+          instagram?: string | null
+          phone?: string | null
+          position?: string | null
           short_id?: string | null
           updated_at?: string
           user_id: string
         }
         Update: {
+          age_group?: string | null
           avatar_url?: string | null
+          birth_date?: string | null
           created_at?: string
+          current_club?: string | null
           full_name?: string
+          guardian_phone?: string | null
           id?: string
+          instagram?: string | null
+          phone?: string | null
+          position?: string | null
           short_id?: string | null
           updated_at?: string
           user_id?: string
