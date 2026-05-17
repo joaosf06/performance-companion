@@ -43,11 +43,105 @@ const Reports = () => {
   const [mentalObs, setMentalObs] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
+  // Personal PDF documents
+  const isCoach = role === "coach";
+  const [docs, setDocs] = useState<AthleteDoc[]>([]);
+  const [docAthleteId, setDocAthleteId] = useState<string>("");
+  const [docDescription, setDocDescription] = useState("");
+  const [uploadingDoc, setUploadingDoc] = useState(false);
+  const docInputRef = useRef<HTMLInputElement>(null);
+
   useEffect(() => {
     if (!user) return;
     fetchReports();
+    fetchDocs();
     if (role === "coach") fetchAthletes();
   }, [user, role]);
+
+  const fetchDocs = async () => {
+    if (!user) return;
+    const query = isCoach
+      ? supabase.from("athlete_documents").select("*").eq("coach_id", user.id).order("created_at", { ascending: false })
+      : supabase.from("athlete_documents").select("*").eq("athlete_id", user.id).order("created_at", { ascending: false });
+    const { data } = await query;
+    if (!data) {
+      setDocs([]);
+      return;
+    }
+    const withUrls = await Promise.all(
+      (data as AthleteDoc[]).map(async (d) => {
+        const { data: signed } = await supabase.storage.from("athlete-documents").createSignedUrl(d.file_path, 3600);
+        return { ...d, file_url: signed?.signedUrl || d.file_url };
+      })
+    );
+    if (isCoach) {
+      const ids = Array.from(new Set(withUrls.map((d) => d.athlete_id)));
+      if (ids.length > 0) {
+        const { data: profs } = await supabase.from("profiles").select("user_id, full_name").in("user_id", ids);
+        const nameMap = new Map((profs || []).map((p: any) => [p.user_id, p.full_name || "Sem nome"]));
+        withUrls.forEach((d) => (d.athlete_name = nameMap.get(d.athlete_id) || "Atleta"));
+      }
+    }
+    setDocs(withUrls);
+  };
+
+  const handleDocUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+    if (!docAthleteId) {
+      toast.error("Seleciona um atleta primeiro.");
+      if (docInputRef.current) docInputRef.current.value = "";
+      return;
+    }
+    if (file.type !== "application/pdf") {
+      toast.error("Apenas ficheiros PDF são permitidos.");
+      if (docInputRef.current) docInputRef.current.value = "";
+      return;
+    }
+    if (file.size > 25 * 1024 * 1024) {
+      toast.error("PDF demasiado grande (máx. 25 MB).");
+      if (docInputRef.current) docInputRef.current.value = "";
+      return;
+    }
+    setUploadingDoc(true);
+    try {
+      const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+      const path = `${user.id}/${docAthleteId}/${Date.now()}_${safeName}`;
+      const { error: upErr } = await supabase.storage.from("athlete-documents").upload(path, file, {
+        contentType: "application/pdf",
+      });
+      if (upErr) throw upErr;
+      const { data: signed } = await supabase.storage.from("athlete-documents").createSignedUrl(path, 3600);
+      const { error: insErr } = await supabase.from("athlete_documents").insert({
+        coach_id: user.id,
+        athlete_id: docAthleteId,
+        file_name: file.name,
+        file_url: signed?.signedUrl || "",
+        file_path: path,
+        description: docDescription.trim() || null,
+      });
+      if (insErr) throw insErr;
+      toast.success("Documento enviado!");
+      setDocDescription("");
+      if (docInputRef.current) docInputRef.current.value = "";
+      fetchDocs();
+    } catch (err: any) {
+      toast.error(err.message);
+    } finally {
+      setUploadingDoc(false);
+    }
+  };
+
+  const deleteDoc = async (doc: AthleteDoc) => {
+    if (!confirm("Eliminar este documento?")) return;
+    await supabase.storage.from("athlete-documents").remove([doc.file_path]);
+    const { error } = await supabase.from("athlete_documents").delete().eq("id", doc.id);
+    if (error) toast.error(error.message);
+    else {
+      toast.success("Documento eliminado");
+      fetchDocs();
+    }
+  };
 
   const fetchReports = async () => {
     if (!user) return;
