@@ -161,6 +161,20 @@ const Library = () => {
   const [selectedAthletes, setSelectedAthletes] = useState<string[]>([]);
   const [existingAssignments, setExistingAssignments] = useState<string[]>([]);
 
+  // Personal PDF documents
+  const [docs, setDocs] = useState<AthleteDoc[]>([]);
+  const [docAthleteId, setDocAthleteId] = useState<string>("");
+  const [docDescription, setDocDescription] = useState("");
+  const [uploadingDoc, setUploadingDoc] = useState(false);
+  const docInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (!user) return;
+    fetchFolders();
+    fetchDocs();
+    if (isCoach) fetchAthletes();
+  }, [user]);
+
   useEffect(() => {
     if (!user) return;
     fetchFolders();
