@@ -39,6 +39,18 @@ interface Athlete {
   short_id: string;
 }
 
+interface AthleteDoc {
+  id: string;
+  coach_id: string;
+  athlete_id: string;
+  file_name: string;
+  file_url: string;
+  file_path: string;
+  description: string | null;
+  created_at: string;
+  athlete_name?: string;
+}
+
 const getFileIcon = (type: string | null) => {
   if (!type) return <File className="h-5 w-5 text-muted-foreground" />;
   if (type.startsWith("video")) return <Video className="h-5 w-5 text-primary" />;
