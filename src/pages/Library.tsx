@@ -175,11 +175,6 @@ const Library = () => {
     if (isCoach) fetchAthletes();
   }, [user]);
 
-  useEffect(() => {
-    if (!user) return;
-    fetchFolders();
-    if (isCoach) fetchAthletes();
-  }, [user]);
 
   // Refetch files whenever the current folder changes
   useEffect(() => {
