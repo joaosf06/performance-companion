@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import Layout from "@/components/Layout";
@@ -10,10 +10,22 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
 import { Badge } from "@/components/ui/badge";
-import { Plus, X } from "lucide-react";
+import { Plus, X, FileUp, Upload, FileText, Download, Trash2, User } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { pt } from "date-fns/locale";
+
+interface AthleteDoc {
+  id: string;
+  coach_id: string;
+  athlete_id: string;
+  file_name: string;
+  file_url: string;
+  file_path: string;
+  description: string | null;
+  created_at: string;
+  athlete_name?: string;
+}
 
 const Reports = () => {
   const { user, role } = useAuth();
