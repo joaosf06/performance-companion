@@ -14,6 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      athlete_documents: {
+        Row: {
+          athlete_id: string
+          coach_id: string
+          created_at: string
+          description: string | null
+          file_name: string
+          file_path: string
+          file_url: string
+          id: string
+        }
+        Insert: {
+          athlete_id: string
+          coach_id: string
+          created_at?: string
+          description?: string | null
+          file_name: string
+          file_path: string
+          file_url: string
+          id?: string
+        }
+        Update: {
+          athlete_id?: string
+          coach_id?: string
+          created_at?: string
+          description?: string | null
+          file_name?: string
+          file_path?: string
+          file_url?: string
+          id?: string
+        }
+        Relationships: []
+      }
       athlete_stats: {
         Row: {
           athlete_id: string
