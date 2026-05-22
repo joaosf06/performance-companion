@@ -70,7 +70,7 @@ const Index = () => {
           <div className="mx-auto mt-20 grid max-w-md grid-cols-3 gap-8">
             {[
               { value: "\n", label: "\n" },
-              { value: "50+", label: "Treinadores" },
+              { value: "\n", label: "\n" },
               { value: "98%", label: "Satisfação" },
             ].map((stat) => (
               <div key={stat.label} className="text-center">
