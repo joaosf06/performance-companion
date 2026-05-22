@@ -17,6 +17,7 @@ import {
   Menu,
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
+import SocialLinks from "@/components/SocialLinks";
 
 const Layout = ({ children }: { children: ReactNode }) => {
   const { profile, role, signOut } = useAuth();
@@ -168,8 +169,12 @@ const Layout = ({ children }: { children: ReactNode }) => {
       </header>
 
       {/* Main content */}
-      <main className="flex-1 min-w-0 w-full max-w-full overflow-x-hidden pt-14 md:pt-0 md:ml-16 lg:ml-64 p-4 sm:p-6 lg:p-8">
-        {children}
+      <main className="flex-1 min-w-0 w-full max-w-full overflow-x-hidden pt-14 md:pt-0 md:ml-16 lg:ml-64 flex flex-col">
+        <div className="flex-1 p-4 sm:p-6 lg:p-8">{children}</div>
+        <footer className="border-t border-border/50 px-4 sm:px-6 lg:px-8 py-6 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <p className="text-xs text-muted-foreground">© {new Date().getFullYear()} Prime11</p>
+          <SocialLinks />
+        </footer>
       </main>
     </div>
   );
