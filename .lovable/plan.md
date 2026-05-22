@@ -1,26 +1,23 @@
-## Permitir upload de qualquer tipo de ficheiro
+## Adicionar Links de Redes Sociais
 
-Atualmente os campos de upload limitam o que podes anexar (`accept="image/*,video/*,.pdf,.doc,.docx,.xls,.xlsx"`). Os buckets do backend já aceitam qualquer tipo, portanto a restrição é só no frontend.
+### Contexto
+Adicionar secção com ícones clicáveis para Instagram, TikTok e Facebook em dois locais:
+1. **Landing page (Index.tsx)** — no footer existente, junto ao copyright.
+2. **Páginas internas (Layout.tsx)** — criar um footer simples no rodapé do conteúdo principal, com os mesmos ícones.
 
-Sobre a alternativa do "conversor automático": converter qualquer formato (vídeo, áudio, ficheiros proprietários, etc.) para um formato universal exigia um motor pesado (ffmpeg, LibreOffice headless, etc.) que não corre neste ambiente. Para qualquer pessoa conseguir abrir o ficheiro, a abordagem fiável é manter o formato original — o navegador/SO do destinatário trata da abertura — e garantir que mostramos um botão claro de download/abrir quando não conseguimos pré-visualizar inline.
+### Técnico
+- Como o projeto usa Lucide React e não tem ícones nativos de redes sociais, os ícones serão SVG inline simples (Instagram, TikTok, Facebook) para manter consistência visual sem adicionar novas dependências.
+- Cada ícone é um `<a>` com `target="_blank" rel="noopener noreferrer"` e link placeholder que pode ser atualizado depois.
+- No `Layout.tsx`: adicionar `<footer>` ao final do `<main>` com os ícones alinhados à direita ou centrados.
+- No `Index.tsx`: expandir o footer existente para incluir os ícones à direita do logo/copyright.
 
-### O que vai mudar
+### Ficheiros
+- `src/pages/Index.tsx` — atualizar footer
+- `src/components/Layout.tsx` — adicionar footer às páginas internas
 
-1. **Remover a restrição `accept`** dos 4 inputs de ficheiro:
-   - `src/pages/Chat.tsx` (mensagens diretas)
-   - `src/pages/Library.tsx` (biblioteca)
-   - `src/pages/CustomQuestionnaires.tsx` (criação de perguntas com anexo)
-   - `src/pages/AnswerQuestionnaire.tsx` (já não tem `accept`, mas vou confirmar)
+### Links (placeholders)
+- Instagram: `https://instagram.com/prime11.pt` (placeholder)
+- TikTok: `https://tiktok.com/@prime11.pt` (placeholder)
+- Facebook: `https://facebook.com/prime11.pt` (placeholder)
 
-2. **Melhorar o fallback de pré-visualização** em `src/components/InlineFilePreview.tsx`:
-   - Para tipos que não são imagem/vídeo/áudio/PDF (ex: .docx, .xlsx, .zip, .txt), mostrar um cartão com nome do ficheiro + tamanho/tipo + botão **"Abrir"** e **"Descarregar"** explícitos, em vez de só um link discreto.
-   - Adicionar suporte a pré-visualização inline para `text/plain` e `text/*` simples (mostra as primeiras linhas).
-
-3. **Validação de tamanho** (segurança mínima):
-   - Manter um limite razoável no frontend (ex: 50 MB por ficheiro) com aviso amigável caso exceda, para evitar uploads acidentais gigantes. Sem outras restrições de tipo.
-
-4. **Sanitização do nome** já existe (`replace(/[^a-zA-Z0-9._-]/g, '_')`) — mantém-se para evitar erros de "Invalid Key" no Storage.
-
-### Não incluído
-- Conversão automática de formatos (não viável no runtime atual sem serviços externos pagos).
-- Alterações de schema ou políticas — os buckets já estão configurados como públicos e sem restrição de mime-type.
+O utilizador poderá atualizar os URLs reais posteriormente.

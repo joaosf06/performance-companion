@@ -17,6 +17,7 @@ import {
   Menu,
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
+import SocialLinks from "@/components/SocialLinks";
 
 const Layout = ({ children }: { children: ReactNode }) => {
   const { profile, role, signOut } = useAuth();

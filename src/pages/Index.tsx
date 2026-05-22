@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { Target, Users, TrendingUp, Brain, ChevronRight, Star, Shield, Zap } from "lucide-react";
+import SocialLinks from "@/components/SocialLinks";
 
 const Index = () => {
   const { user } = useAuth();
@@ -225,10 +226,11 @@ Mais do que treinos, procuramos oferecer um sistema de desenvolvimento físico, 
 
       {/* Footer */}
       <footer className="border-t border-border/50 py-10 px-6">
-        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 sm:flex-row">
+        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-6 sm:flex-row">
           <p className="text-xl font-bold tracking-tight">
             PRIME<span className="text-primary">11</span>
           </p>
+          <SocialLinks />
           <p className="text-sm text-muted-foreground">
             © {new Date().getFullYear()} Prime11. Todos os direitos reservados.
           </p>
