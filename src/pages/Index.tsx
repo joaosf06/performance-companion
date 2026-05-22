@@ -60,7 +60,7 @@ const Index = () => {
             </Link>
             <Link to="/auth">
               <Button variant="outline" size="lg" className="text-base px-8">
-                Começar agora
+                Criar conta
               </Button>
             </Link>
           </div>
@@ -68,7 +68,7 @@ const Index = () => {
           {/* Stats */}
           <div className="mx-auto mt-20 grid max-w-md grid-cols-3 gap-8">
             {[
-              { value: "500+", label: "Atletas" },
+              { value: "\n", label: "\n" },
               { value: "50+", label: "Treinadores" },
               { value: "98%", label: "Satisfação" },
             ].map((stat) => (
@@ -90,8 +90,8 @@ const Index = () => {
               Treinadores e jogadores, juntos.
             </h2>
             <p className="mt-4 text-muted-foreground text-lg">
-              A Prime11 nasceu da necessidade de profissionalizar o acompanhamento individual no futebol. 
-              Acreditamos que cada jogador merece um plano personalizado, dados concretos e comunicação direta com o seu treinador.
+              A Prime11 nasceu da necessidade de profissionalizar e individualizar o acompanhamento aos jogadores no futebol. 
+              Acreditamos que cada atleta merece um plano personalizado, dados concretos e comunicação direta com o seu treinador.
             </p>
           </div>
 
@@ -100,7 +100,7 @@ const Index = () => {
               {
                 icon: Target,
                 title: "Missão",
-                description: "Democratizar o treino individual de alta qualidade, acessível a todos os níveis competitivos.",
+                description: "Profissionalismo, excelência, transparência e compromisso com a evolução de cada atleta.",
               },
               {
                 icon: Star,
@@ -146,7 +146,7 @@ const Index = () => {
               {
                 icon: TrendingUp,
                 title: "Relatórios de Treino Detalhados",
-                description: "O treinador avalia cada sessão com notas técnicas, de intensidade e observações comportamentais. O jogador acompanha a sua evolução em tempo real.",
+                description: "O treinador gere o seu portefólio de atletas, com acesso ao histórico completo de cada jogador — relatórios, questionários e evolução.",
               },
               {
                 icon: Brain,
@@ -193,12 +193,12 @@ const Index = () => {
           </div>
 
           <div className="mt-16 mx-auto max-w-3xl rounded-xl border border-border/50 bg-card p-10 text-center">
-            <p className="text-muted-foreground leading-relaxed text-base">
-              A Prime11 nasceu de um grupo de apaixonados pelo futebol e pela tecnologia, 
-              que identificaram uma lacuna no mercado: a falta de ferramentas digitais dedicadas 
-              ao acompanhamento individual de jogadores. A nossa missão é criar a ponte entre 
-              atletas e treinadores, oferecendo a cada jogador — independentemente do nível — 
-              acesso a dados, relatórios e comunicação contínua que potenciem a sua evolução.
+            <p className="text-muted-foreground leading-relaxed text-base whitespace-pre-wrap">
+              A Prime 11 nasceu da necessidade de criar um ambiente de desenvolvimento verdadeiramente focado no atleta.
+
+Num contexto onde muitos jogadores treinam sem acompanhamento individual, estrutura ou feedback contínuo, a Prime 11 surge com uma abordagem baseada em metodologia, exigência e evolução constante. Um dos nossos objetivos é criar uma ponte entre jogadores e treinadores de forma a que a evolução seja elo mais eficaz possível.
+
+Mais do que treinos, procuramos oferecer um sistema de desenvolvimento físico, técnico e mental, onde cada atleta é acompanhado de forma individual para atingir o seu máximo potencial através de acesso a dados relatórios e comunicação continua.
             </p>
           </div>
         </div>
@@ -216,7 +216,7 @@ const Index = () => {
           <div className="mt-8">
             <Link to="/auth">
               <Button size="lg" className="gap-2 text-base px-10">
-                Criar conta grátis <ChevronRight className="h-4 w-4" />
+                Criar conta <ChevronRight className="h-4 w-4" />
               </Button>
             </Link>
           </div>
