@@ -31,7 +31,7 @@ const SOCIALS = [
 ];
 
 const SocialLinks = ({ className = "" }: { className?: string }) => (
-  <div className={`flex items-center gap-3 ${className}`}>
+  <div className={`gap-3 flex-row flex items-start justify-start ml-[245px] ${className}`}>
     {SOCIALS.map((s) => (
       <a
         key={s.label}
