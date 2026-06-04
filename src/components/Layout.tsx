@@ -18,7 +18,7 @@ import {
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import SocialLinks from "@/components/SocialLinks";
-import logoPrime11 from "@/assets/logo-prime11.jpeg.asset.json";
+import logoPrime11 from "@/assets/logo-prime11.png.asset.json";
 
 const Layout = ({ children }: { children: ReactNode }) => {
   const { profile, role, signOut } = useAuth();

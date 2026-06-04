@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import logoPrime11 from "@/assets/logo-prime11.jpeg.asset.json";
+import logoPrime11 from "@/assets/logo-prime11.png.asset.json";
 
 const Auth = () => {
   const { user } = useAuth();
