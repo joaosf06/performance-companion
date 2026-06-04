@@ -71,7 +71,7 @@ const Index = () => {
             {[
               { value: "\n", label: "\n" },
               { value: "\n", label: "\n" },
-              { value: "98%", label: "Satisfação" },
+              { value: "\n", label: "\n" },
             ].map((stat) => (
               <div key={stat.label} className="text-center">
                 <p className="text-2xl font-bold text-foreground sm:text-3xl">{stat.value}</p>
