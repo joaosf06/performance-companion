@@ -9,7 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { ChevronLeft, CheckCircle } from "lucide-react";
-import logoPrime11 from "@/assets/logo-prime11.jpeg.asset.json";
+import logoPrime11 from "@/assets/logo-prime11.png.asset.json";
 
 const positions = [
   "Guarda-redes",

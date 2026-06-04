@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { Target, Users, TrendingUp, Brain, ChevronRight, Star, Shield, Zap } from "lucide-react";
 import SocialLinks from "@/components/SocialLinks";
-import logoPrime11 from "@/assets/logo-prime11.jpeg.asset.json";
+import logoPrime11 from "@/assets/logo-prime11.png.asset.json";
 
 const Index = () => {
   const { user } = useAuth();
