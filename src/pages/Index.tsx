@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { Target, Users, TrendingUp, Brain, ChevronRight, Star, Shield, Zap } from "lucide-react";
 import SocialLinks from "@/components/SocialLinks";
+import logoPrime11 from "@/assets/logo-prime11.jpeg.asset.json";
 
 const Index = () => {
   const { user } = useAuth();
@@ -12,8 +13,8 @@ const Index = () => {
       {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-50 border-b border-border/50 bg-background/80 backdrop-blur-xl">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
-          <Link to="/" className="text-xl font-bold tracking-tight">
-            PRIME<span className="text-primary">11</span>
+          <Link to="/" className="flex items-center">
+            <img src={logoPrime11.url} alt="Prime11" className="h-10 w-auto" />
           </Link>
           <div className="flex items-center gap-4">
             <a href="#sobre" className="hidden text-sm text-muted-foreground hover:text-foreground transition-colors sm:inline-block">Sobre</a>
