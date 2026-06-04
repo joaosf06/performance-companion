@@ -9,6 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { ChevronLeft, CheckCircle } from "lucide-react";
+import logoPrime11 from "@/assets/logo-prime11.jpeg.asset.json";
 
 const positions = [
   "Guarda-redes",
@@ -111,8 +112,8 @@ const FreeTrial = () => {
       {/* Nav */}
       <nav className="fixed top-0 left-0 right-0 z-50 border-b border-border/50 bg-background/80 backdrop-blur-xl">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
-          <Link to="/" className="text-xl font-bold tracking-tight">
-            PRIME<span className="text-primary">11</span>
+          <Link to="/" className="flex items-center">
+            <img src={logoPrime11.url} alt="Prime11" className="h-10 w-auto" />
           </Link>
           <Link to="/auth">
             <Button size="sm">Entrar</Button>

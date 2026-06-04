@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import SocialLinks from "@/components/SocialLinks";
+import logoPrime11 from "@/assets/logo-prime11.jpeg.asset.json";
 
 const Layout = ({ children }: { children: ReactNode }) => {
   const { profile, role, signOut } = useAuth();
@@ -113,10 +114,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
       {/* Desktop sidebar (collapsed icon-only on md, full on lg) */}
       <aside className="fixed left-0 top-0 z-40 hidden md:flex h-screen w-16 lg:w-64 flex-col border-r border-border bg-card">
         <Link to="/" className="flex h-16 items-center justify-center lg:justify-start px-3 lg:px-6 border-b border-border hover:opacity-80 transition-opacity">
-          <h1 className="text-xl font-bold tracking-tight">
-            <span className="lg:hidden text-primary">P11</span>
-            <span className="hidden lg:inline">PRIME<span className="text-primary">11</span></span>
-          </h1>
+          <img src={logoPrime11.url} alt="Prime11" className="h-10 w-auto" />
         </Link>
 
         {/* Show compact nav on md, full on lg */}
@@ -145,17 +143,15 @@ const Layout = ({ children }: { children: ReactNode }) => {
           </SheetTrigger>
           <SheetContent side="left" className="p-0 w-64 flex flex-col">
             <Link to="/" onClick={() => setMobileOpen(false)} className="flex h-16 items-center px-6 border-b border-border hover:opacity-80 transition-opacity">
-              <h1 className="text-xl font-bold tracking-tight">
-                PRIME<span className="text-primary">11</span>
-              </h1>
+              <img src={logoPrime11.url} alt="Prime11" className="h-10 w-auto" />
             </Link>
             <NavList onNavigate={() => setMobileOpen(false)} />
             <SidebarFooter onNavigate={() => setMobileOpen(false)} />
           </SheetContent>
         </Sheet>
 
-        <Link to="/" className="text-lg font-bold tracking-tight hover:opacity-80 transition-opacity">
-          PRIME<span className="text-primary">11</span>
+        <Link to="/" className="flex items-center hover:opacity-80 transition-opacity">
+          <img src={logoPrime11.url} alt="Prime11" className="h-9 w-auto" />
         </Link>
 
         <Link to="/settings" aria-label="Conta" className="rounded-full">

@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
+import logoPrime11 from "@/assets/logo-prime11.jpeg.asset.json";
 
 const Auth = () => {
   const { user } = useAuth();
@@ -87,10 +88,8 @@ const Auth = () => {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background py-10">
       <div className="w-full max-w-md space-y-8 px-6">
-        <div className="text-center">
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">
-            PRIME<span className="text-primary">11</span>
-          </h1>
+        <div className="text-center flex flex-col items-center">
+          <img src={logoPrime11.url} alt="Prime11" className="h-16 w-auto" />
           <p className="mt-2 text-sm text-muted-foreground">
             {isLogin ? "Entra na tua conta" : "Cria a tua conta"}
           </p>
