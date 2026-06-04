@@ -228,9 +228,7 @@ Mais do que treinos, procuramos oferecer um sistema de desenvolvimento físico, 
       {/* Footer */}
       <footer className="border-t border-border/50 py-10 px-6">
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-6 sm:flex-row">
-          <p className="text-xl font-bold tracking-tight">
-            PRIME<span className="text-primary">11</span>
-          </p>
+          <img src={logoPrime11.url} alt="Prime11" className="h-10 w-auto" />
           <SocialLinks />
           <p className="text-sm text-muted-foreground">
             © {new Date().getFullYear()} Prime11. Todos os direitos reservados.
