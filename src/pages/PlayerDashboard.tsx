@@ -151,7 +151,20 @@ const PlayerDashboard = () => {
                 )}
               </CardContent>
             </Card>
+            <Link to="/bookings">
+              <Card className="cursor-pointer transition-all hover:border-primary/50 border-primary/30">
+                <CardHeader className="flex flex-row items-center justify-between pb-2">
+                  <CardTitle className="text-sm font-medium text-muted-foreground">Marcar Treino</CardTitle>
+                  <CalendarDays className="h-4 w-4 text-primary" />
+                </CardHeader>
+                <CardContent>
+                  <Badge variant="default">Calendário</Badge>
+                  <p className="mt-2 text-xs text-muted-foreground">Reserva o teu horário</p>
+                </CardContent>
+              </Card>
+            </Link>
           </div>
+
 
           {customAssignments.length > 0 && (
             <Card>
