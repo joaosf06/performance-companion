@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { FileText, ClipboardList, TrendingUp, ListChecks, BarChart3 } from "lucide-react";
+import { FileText, ClipboardList, TrendingUp, ListChecks, BarChart3, CalendarDays } from "lucide-react";
 import { Link } from "react-router-dom";
 import { format, startOfWeek } from "date-fns";
 import { pt } from "date-fns/locale";
@@ -104,7 +104,7 @@ const PlayerDashboard = () => {
         </TabsList>
 
         <TabsContent value="overview" className="space-y-8 mt-6">
-          <div className="grid gap-6 md:grid-cols-3">
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             <Link to="/questionnaire">
               <Card className={`cursor-pointer transition-all hover:border-primary/50 ${hasPendingQuestionnaire ? 'border-primary/30' : ''}`}>
                 <CardHeader className="flex flex-row items-center justify-between pb-2">
@@ -151,7 +151,20 @@ const PlayerDashboard = () => {
                 )}
               </CardContent>
             </Card>
+            <Link to="/bookings">
+              <Card className="cursor-pointer transition-all hover:border-primary/50 border-primary/30">
+                <CardHeader className="flex flex-row items-center justify-between pb-2">
+                  <CardTitle className="text-sm font-medium text-muted-foreground">Marcar Treino</CardTitle>
+                  <CalendarDays className="h-4 w-4 text-primary" />
+                </CardHeader>
+                <CardContent>
+                  <Badge variant="default">Calendário</Badge>
+                  <p className="mt-2 text-xs text-muted-foreground">Reserva o teu horário</p>
+                </CardContent>
+              </Card>
+            </Link>
           </div>
+
 
           {customAssignments.length > 0 && (
             <Card>

@@ -13,6 +13,7 @@ import {
   MessageCircle,
   BookOpen,
   Dumbbell,
+  CalendarDays,
   Settings as SettingsIcon,
   Menu,
 } from "lucide-react";
@@ -34,6 +35,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
     { path: "/custom-questionnaires", label: "Questionários", icon: ClipboardList },
     { path: "/library", label: "Biblioteca", icon: BookOpen },
     { path: "/workouts", label: "Treinos", icon: Dumbbell },
+    { path: "/bookings", label: "Marcações", icon: CalendarDays },
     { path: "/chat", label: "Mensagens", icon: MessageCircle },
   ];
 
@@ -43,8 +45,10 @@ const Layout = ({ children }: { children: ReactNode }) => {
     { path: "/questionnaire", label: "Questionário", icon: ClipboardList },
     { path: "/library", label: "Biblioteca", icon: BookOpen },
     { path: "/workouts", label: "Treinos", icon: Dumbbell },
+    { path: "/bookings", label: "Marcações", icon: CalendarDays },
     { path: "/chat", label: "Mensagens", icon: MessageCircle },
   ];
+
 
   const links = role === "coach" ? coachLinks : playerLinks;
 
