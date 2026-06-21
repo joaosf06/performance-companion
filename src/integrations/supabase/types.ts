@@ -94,6 +94,42 @@ export type Database = {
           },
         ]
       }
+      bookings: {
+        Row: {
+          athlete_id: string
+          coach_id: string
+          created_at: string
+          duration_minutes: number
+          id: string
+          slot_date: string
+          source: string
+          source_id: string | null
+          start_time: string
+        }
+        Insert: {
+          athlete_id: string
+          coach_id: string
+          created_at?: string
+          duration_minutes?: number
+          id?: string
+          slot_date: string
+          source: string
+          source_id?: string | null
+          start_time: string
+        }
+        Update: {
+          athlete_id?: string
+          coach_id?: string
+          created_at?: string
+          duration_minutes?: number
+          id?: string
+          slot_date?: string
+          source?: string
+          source_id?: string | null
+          start_time?: string
+        }
+        Relationships: []
+      }
       coach_athletes: {
         Row: {
           athlete_id: string
@@ -112,6 +148,96 @@ export type Database = {
           coach_id?: string
           created_at?: string
           id?: string
+        }
+        Relationships: []
+      }
+      coach_date_slots: {
+        Row: {
+          capacity: number | null
+          coach_id: string
+          created_at: string
+          duration_minutes: number | null
+          id: string
+          is_blocked: boolean
+          note: string | null
+          slot_date: string
+          start_time: string | null
+        }
+        Insert: {
+          capacity?: number | null
+          coach_id: string
+          created_at?: string
+          duration_minutes?: number | null
+          id?: string
+          is_blocked?: boolean
+          note?: string | null
+          slot_date: string
+          start_time?: string | null
+        }
+        Update: {
+          capacity?: number | null
+          coach_id?: string
+          created_at?: string
+          duration_minutes?: number | null
+          id?: string
+          is_blocked?: boolean
+          note?: string | null
+          slot_date?: string
+          start_time?: string | null
+        }
+        Relationships: []
+      }
+      coach_recurring_slots: {
+        Row: {
+          active: boolean
+          capacity: number
+          coach_id: string
+          created_at: string
+          duration_minutes: number
+          id: string
+          start_time: string
+          weekday: number
+        }
+        Insert: {
+          active?: boolean
+          capacity?: number
+          coach_id: string
+          created_at?: string
+          duration_minutes?: number
+          id?: string
+          start_time: string
+          weekday: number
+        }
+        Update: {
+          active?: boolean
+          capacity?: number
+          coach_id?: string
+          created_at?: string
+          duration_minutes?: number
+          id?: string
+          start_time?: string
+          weekday?: number
+        }
+        Relationships: []
+      }
+      coach_schedule_settings: {
+        Row: {
+          coach_id: string
+          created_at: string
+          min_cancel_hours: number
+          updated_at: string
+        }
+        Insert: {
+          coach_id: string
+          created_at?: string
+          min_cancel_hours?: number
+          updated_at?: string
+        }
+        Update: {
+          coach_id?: string
+          created_at?: string
+          min_cancel_hours?: number
+          updated_at?: string
         }
         Relationships: []
       }
