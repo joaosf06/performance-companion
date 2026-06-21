@@ -104,7 +104,7 @@ const PlayerDashboard = () => {
         </TabsList>
 
         <TabsContent value="overview" className="space-y-8 mt-6">
-          <div className="grid gap-6 md:grid-cols-3">
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             <Link to="/questionnaire">
               <Card className={`cursor-pointer transition-all hover:border-primary/50 ${hasPendingQuestionnaire ? 'border-primary/30' : ''}`}>
                 <CardHeader className="flex flex-row items-center justify-between pb-2">
