@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { FileText, ClipboardList, TrendingUp, ListChecks, BarChart3 } from "lucide-react";
+import { FileText, ClipboardList, TrendingUp, ListChecks, BarChart3, CalendarDays } from "lucide-react";
 import { Link } from "react-router-dom";
 import { format, startOfWeek } from "date-fns";
 import { pt } from "date-fns/locale";
