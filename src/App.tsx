@@ -21,6 +21,7 @@ const Library = lazy(() => import("./pages/Library"));
 const AnswerQuestionnaire = lazy(() => import("./pages/AnswerQuestionnaire"));
 const Workouts = lazy(() => import("./pages/Workouts"));
 const Settings = lazy(() => import("./pages/Settings"));
+const Bookings = lazy(() => import("./pages/Bookings"));
 
 const queryClient = new QueryClient();
 
