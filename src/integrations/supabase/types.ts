@@ -909,46 +909,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      generate_short_id: { Args: never; Returns: string }
-      has_role: {
-        Args: {
-          _role: Database["public"]["Enums"]["app_role"]
-          _user_id: string
-        }
-        Returns: boolean
-      }
-      is_assigned_folder: {
-        Args: { _athlete_id: string; _folder_id: string }
-        Returns: boolean
-      }
-      is_assigned_folder_or_ancestor: {
-        Args: { _athlete_id: string; _folder_id: string }
-        Returns: boolean
-      }
-      is_assigned_questionnaire: {
-        Args: { _athlete_id: string; _questionnaire_id: string }
-        Returns: boolean
-      }
-      is_assigned_workout: {
-        Args: { _athlete_id: string; _workout_id: string }
-        Returns: boolean
-      }
-      is_coach_of_athlete: {
-        Args: { _athlete_id: string; _coach_id: string }
-        Returns: boolean
-      }
-      owns_library_folder: {
-        Args: { _folder_id: string; _user_id: string }
-        Returns: boolean
-      }
-      owns_questionnaire: {
-        Args: { _questionnaire_id: string; _user_id: string }
-        Returns: boolean
-      }
-      owns_workout: {
-        Args: { _user_id: string; _workout_id: string }
-        Returns: boolean
-      }
+      [_ in never]: never
     }
     Enums: {
       app_role: "player" | "coach"
