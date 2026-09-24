@@ -5,6 +5,9 @@ import { Target, Users, TrendingUp, Brain, ChevronRight, Star, Shield, Zap } fro
 import SocialLinks from "@/components/SocialLinks";
 import logoPrime11 from "@/assets/logo-prime11.png.asset.json";
 
+const heroImage =
+  "https://nbiwobyvwdtrchqzgrix.supabase.co/storage/v1/object/public/site-assets//IMG_5656.jpeg";
+
 const Index = () => {
   const { user } = useAuth();
 
@@ -34,54 +37,68 @@ const Index = () => {
       </nav>
 
       {/* Hero */}
-      <section className="relative flex min-h-screen items-center justify-center overflow-hidden px-6 pt-16">
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute left-1/2 top-1/3 h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/8 blur-[120px]" />
+      <section className="relative flex min-h-screen items-center overflow-hidden px-6 pt-24 pb-16">
+        {/* Background photo */}
+        <div className="absolute inset-0">
+          <img
+            src={heroImage}
+            alt="Treino Prime11"
+            fetchPriority="high"
+            decoding="async"
+            className="h-full w-full object-cover object-center scale-105"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-background via-background/90 to-background/40" />
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-background/70" />
+          <div className="absolute left-1/4 top-1/3 h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/10 blur-[140px]" />
         </div>
 
-        <div className="relative z-10 mx-auto max-w-4xl text-center animate-fade-in">
-          <span className="mb-6 inline-block rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-xs font-medium uppercase tracking-widest text-primary">
-            Treino Individual de Elite
-          </span>
+        <div className="relative z-10 mx-auto grid w-full max-w-6xl gap-12 lg:grid-cols-2 lg:items-center">
+          <div className="animate-fade-in text-center lg:text-left">
+            <span className="mb-6 inline-block rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-xs font-medium uppercase tracking-widest text-primary backdrop-blur-sm">
+              Treino Individual de Elite
+            </span>
 
-          <h1 className="text-4xl font-bold leading-[1.1] tracking-tight sm:text-6xl lg:text-7xl">
-            O teu rendimento.{" "}
-            <span className="text-primary">Sem limites.</span>
-          </h1>
+            <h1 className="text-4xl font-bold leading-[1.05] tracking-tight sm:text-6xl lg:text-7xl">
+              O teu rendimento.{" "}
+              <span className="text-primary">Sem limites.</span>
+            </h1>
 
-          <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground sm:text-xl">
-            A Prime11 conecta jogadores e treinadores numa plataforma de acompanhamento personalizado. 
-            Monitoriza, evolui e atinge o teu máximo potencial.
-          </p>
+            <p className="mx-auto mt-6 max-w-xl text-lg text-muted-foreground sm:text-xl lg:mx-0">
+              A Prime11 conecta jogadores e treinadores numa plataforma de acompanhamento personalizado.
+              Monitoriza, evolui e atinge o teu máximo potencial.
+            </p>
 
-          <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-            <Link to="/treino-gratis">
-              <Button size="lg" className="gap-2 text-base px-8">
-                Treino grátis <ChevronRight className="h-4 w-4" />
-              </Button>
-            </Link>
-            <Link to="/auth">
-              <Button variant="outline" size="lg" className="text-base px-8">
-                Criar conta
-              </Button>
-            </Link>
+            <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center lg:justify-start">
+              <Link to="/treino-gratis">
+                <Button size="lg" className="gap-2 text-base px-8">
+                  Treino grátis <ChevronRight className="h-4 w-4" />
+                </Button>
+              </Link>
+              <Link to="/auth">
+                <Button variant="outline" size="lg" className="text-base px-8 bg-background/40 backdrop-blur-sm">
+                  Criar conta
+                </Button>
+              </Link>
+            </div>
           </div>
 
-          {/* Stats */}
-          <div className="mx-auto mt-20 grid max-w-md grid-cols-3 gap-8">
-            {[
-              { value: "\n", label: "\n" },
-              { value: "\n", label: "\n" },
-              { value: "\n", label: "\n" },
-            ].map((stat) => (
-              <div key={stat.label} className="text-center">
-                <p className="text-2xl font-bold text-foreground sm:text-3xl">{stat.value}</p>
-                <p className="mt-1 text-xs text-muted-foreground uppercase tracking-wider">{stat.label}</p>
-              </div>
-            ))}
+          {/* Framed photo card */}
+          <div className="relative hidden lg:block animate-fade-in">
+            <div className="absolute -inset-4 rounded-[2rem] bg-primary/20 blur-3xl" />
+            <div className="relative overflow-hidden rounded-3xl border border-border/60 bg-card shadow-2xl">
+              <img
+                src={heroImage}
+                alt="Atleta em treino individual Prime11"
+                fetchPriority="high"
+                decoding="async"
+                className="aspect-[4/5] w-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent" />
+            </div>
           </div>
         </div>
       </section>
+
 
       {/* Sobre */}
       <section id="sobre" className="border-t border-border/50 py-24 px-6">
