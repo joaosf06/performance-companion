@@ -8,6 +8,13 @@
       "when": 1790242969742,
       "tag": "0000_site_assets_policies",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1790243857339,
+      "tag": "0001_create_site_settings",
+      "breakpoints": true
     }
   ]
 }
