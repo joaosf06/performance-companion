@@ -1,15 +1,38 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { Slider } from "@/components/ui/slider";
 import { useAuth } from "@/contexts/AuthContext";
-import { Target, Users, TrendingUp, Brain, ChevronRight, Star, Shield, Zap } from "lucide-react";
+import { Target, Users, TrendingUp, Brain, ChevronRight, Star, Shield, Zap, Move, Check, X } from "lucide-react";
 import SocialLinks from "@/components/SocialLinks";
 import logoPrime11 from "@/assets/logo-prime11.png.asset.json";
+import AdjustableImage from "@/components/AdjustableImage";
+import { useHeroFraming, bgFraming, cardFraming, DEFAULT_HERO_FRAMING } from "@/hooks/useHeroFraming";
+import { toast } from "sonner";
 
 const heroImage =
   "https://nbiwobyvwdtrchqzgrix.supabase.co/storage/v1/object/public/site-assets//IMG_5656.jpeg";
 
 const Index = () => {
-  const { user } = useAuth();
+  const { user, role } = useAuth();
+  const canEdit = role === "coach";
+  const { framing, setFraming, save } = useHeroFraming();
+  const [editing, setEditing] = useState(false);
+  const [saving, setSaving] = useState(false);
+
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      await save(framing);
+      toast.success("Enquadramento guardado");
+      setEditing(false);
+    } catch {
+      toast.error("Não foi possível guardar");
+    } finally {
+      setSaving(false);
+    }
+  };
+
 
   return (
     <div className="min-h-screen bg-background text-foreground">
