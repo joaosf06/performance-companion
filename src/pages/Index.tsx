@@ -5,6 +5,9 @@ import { Target, Users, TrendingUp, Brain, ChevronRight, Star, Shield, Zap } fro
 import SocialLinks from "@/components/SocialLinks";
 import logoPrime11 from "@/assets/logo-prime11.png.asset.json";
 
+const heroImage =
+  "https://nbiwobyvwdtrchqzgrix.supabase.co/storage/v1/object/public/site-assets//IMG_5656.jpeg";
+
 const Index = () => {
   const { user } = useAuth();
 
