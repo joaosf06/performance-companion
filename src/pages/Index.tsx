@@ -1,15 +1,38 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { Slider } from "@/components/ui/slider";
 import { useAuth } from "@/contexts/AuthContext";
-import { Target, Users, TrendingUp, Brain, ChevronRight, Star, Shield, Zap } from "lucide-react";
+import { Target, Users, TrendingUp, Brain, ChevronRight, Star, Shield, Zap, Move, Check, X } from "lucide-react";
 import SocialLinks from "@/components/SocialLinks";
 import logoPrime11 from "@/assets/logo-prime11.png.asset.json";
+import AdjustableImage from "@/components/AdjustableImage";
+import { useHeroFraming, bgFraming, cardFraming, DEFAULT_HERO_FRAMING } from "@/hooks/useHeroFraming";
+import { toast } from "sonner";
 
 const heroImage =
   "https://nbiwobyvwdtrchqzgrix.supabase.co/storage/v1/object/public/site-assets//IMG_5656.jpeg";
 
 const Index = () => {
-  const { user } = useAuth();
+  const { user, role } = useAuth();
+  const canEdit = role === "coach";
+  const { framing, setFraming, save } = useHeroFraming();
+  const [editing, setEditing] = useState(false);
+  const [saving, setSaving] = useState(false);
+
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      await save(framing);
+      toast.success("Enquadramento guardado");
+      setEditing(false);
+    } catch {
+      toast.error("Não foi possível guardar");
+    } finally {
+      setSaving(false);
+    }
+  };
+
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -40,17 +63,19 @@ const Index = () => {
       <section className="relative flex min-h-screen items-center overflow-hidden px-6 pt-24 pb-16">
         {/* Background photo */}
         <div className="absolute inset-0">
-          <img
+          <AdjustableImage
             src={heroImage}
             alt="Treino Prime11"
-            fetchPriority="high"
-            decoding="async"
-            className="h-full w-full object-cover object-center scale-105"
+            framing={bgFraming(framing)}
+            editable={editing}
+            onChange={(f) => setFraming({ ...framing, bgX: f.x, bgY: f.y, bgZoom: f.zoom })}
+            className="h-full w-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-background via-background/90 to-background/40" />
-          <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-background/70" />
-          <div className="absolute left-1/4 top-1/3 h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/10 blur-[140px]" />
+          <div className={`absolute inset-0 bg-gradient-to-r from-background via-background/90 to-background/40 ${editing ? "pointer-events-none opacity-40" : ""}`} />
+          <div className={`absolute inset-0 bg-gradient-to-t from-background via-transparent to-background/70 ${editing ? "pointer-events-none opacity-40" : ""}`} />
+          <div className="pointer-events-none absolute left-1/4 top-1/3 h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/10 blur-[140px]" />
         </div>
+
 
         <div className="relative z-10 mx-auto grid w-full max-w-6xl gap-12 lg:grid-cols-2 lg:items-center">
           <div className="animate-fade-in text-center lg:text-left">
