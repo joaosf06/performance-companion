@@ -63,6 +63,26 @@ const ImageField = ({
             <Move className="h-3.5 w-3.5" /> Arrasta a foto para posicionar
           </p>
           <div>
+            <p className="mb-1 text-xs text-muted-foreground">Horizontal {Math.round(value.x)}%</p>
+            <Slider
+              value={[value.x]}
+              min={0}
+              max={100}
+              step={1}
+              onValueChange={([x]) => onChange({ ...value, x })}
+            />
+          </div>
+          <div>
+            <p className="mb-1 text-xs text-muted-foreground">Vertical {Math.round(value.y)}%</p>
+            <Slider
+              value={[value.y]}
+              min={0}
+              max={100}
+              step={1}
+              onValueChange={([y]) => onChange({ ...value, y })}
+            />
+          </div>
+          <div>
             <p className="mb-1 text-xs text-muted-foreground">Zoom {value.zoom}%</p>
             <Slider
               value={[value.zoom]}
