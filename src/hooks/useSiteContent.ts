@@ -153,7 +153,7 @@ export const useSiteContent = () => {
   const save = useCallback(async (next: HomeContent) => {
     const { error } = await supabase.from("site_settings").upsert({
       key: SETTING_KEY,
-      value: next as unknown as Record<string, unknown>,
+      value: next as unknown as import("@/integrations/supabase/types").Json,
       updated_at: new Date().toISOString(),
     });
     if (error) throw error;
