@@ -17,7 +17,7 @@ const EditableText = ({
   className,
   multiline = false,
 }: EditableTextProps) => {
-  const Tag = as as keyof JSX.IntrinsicElements;
+  const Tag = as as "div";
 
   return (
     <Tag
