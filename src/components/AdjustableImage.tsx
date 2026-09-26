@@ -37,8 +37,9 @@ const AdjustableImage = ({
     if (!editable || !dragging || !start.current || !onChange) return;
     const rect = ref.current?.getBoundingClientRect();
     if (!rect) return;
-    const dx = ((e.clientX - start.current.px) / rect.width) * 100;
-    const dy = ((e.clientY - start.current.py) / rect.height) * 100;
+    const scale = Math.max(1, framing.zoom / 100);
+    const dx = ((e.clientX - start.current.px) / rect.width) * 100 / scale;
+    const dy = ((e.clientY - start.current.py) / rect.height) * 100 / scale;
     onChange({
       ...framing,
       x: clamp(start.current.x - dx),
@@ -66,6 +67,7 @@ const AdjustableImage = ({
       style={{
         objectPosition: `${framing.x}% ${framing.y}%`,
         transform: `scale(${framing.zoom / 100})`,
+        transformOrigin: `${framing.x}% ${framing.y}%`,
       }}
       className={`${className} ${
         editable ? (dragging ? "cursor-grabbing" : "cursor-grab") : ""
