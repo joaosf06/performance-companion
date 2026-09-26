@@ -141,7 +141,13 @@ const Index = () => {
         </div>
 
         <div className="relative z-10 mx-auto grid w-full max-w-6xl gap-12 lg:grid-cols-2 lg:items-center">
-          <div className={`animate-fade-in ${alignClass[content.heroAlign]}`}>
+          <div
+            className={`animate-fade-in ${alignClass[content.heroAlign]} ${
+              editing
+                ? "pointer-events-none [&_[contenteditable]]:pointer-events-auto [&_a]:pointer-events-auto [&_button]:pointer-events-auto"
+                : ""
+            }`}
+          >
             {editing && (
               <div className="mb-4 inline-flex gap-1 rounded-lg border border-border bg-background/95 p-1">
                 {([
