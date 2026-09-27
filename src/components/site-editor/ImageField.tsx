@@ -1,9 +1,10 @@
 import { useRef, useState } from "react";
 import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
-import { Upload, Move } from "lucide-react";
+import { Upload, Move, Images } from "lucide-react";
 import { toast } from "sonner";
 import AdjustableImage from "@/components/AdjustableImage";
+import BucketAssetPicker from "@/components/site-editor/BucketAssetPicker";
 import { uploadSiteAsset } from "@/lib/siteAssets";
 import type { ImageContent } from "@/hooks/useSiteContent";
 
@@ -26,6 +27,7 @@ const ImageField = ({
 }: ImageFieldProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
+  const [pickerOpen, setPickerOpen] = useState(false);
 
   const handleFile = async (file?: File | null) => {
     if (!file) return;
@@ -101,6 +103,19 @@ const ImageField = ({
           >
             <Upload className="h-3.5 w-3.5" /> {uploading ? "A carregar..." : "Trocar foto"}
           </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            className="w-full gap-2"
+            onClick={() => setPickerOpen(true)}
+          >
+            <Images className="h-3.5 w-3.5" /> Fotos guardadas
+          </Button>
+          <BucketAssetPicker
+            open={pickerOpen}
+            onOpenChange={setPickerOpen}
+            onSelect={({ url }) => onChange({ ...value, url })}
+          />
           <input
             ref={inputRef}
             type="file"
