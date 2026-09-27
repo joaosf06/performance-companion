@@ -514,6 +514,21 @@ const Index = () => {
                 <Button variant="outline" size="sm" className="gap-2" onClick={() => galleryInput.current?.click()}>
                   <Plus className="h-4 w-4" /> Adicionar foto
                 </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="ml-2 gap-2"
+                  onClick={() => setGalleryPicker(true)}
+                >
+                  <Images className="h-4 w-4" /> Fotos guardadas
+                </Button>
+                <BucketAssetPicker
+                  open={galleryPicker}
+                  onOpenChange={setGalleryPicker}
+                  onSelect={({ url }) =>
+                    set("gallery", [...content.gallery, { url, caption: "", x: 50, y: 50, zoom: 100 }])
+                  }
+                />
                 <input
                   ref={galleryInput}
                   type="file"
@@ -581,6 +596,20 @@ const Index = () => {
                 <Button variant="outline" size="sm" className="gap-2" onClick={() => docInput.current?.click()}>
                   <Plus className="h-4 w-4" /> Adicionar ficheiro
                 </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="ml-2 gap-2"
+                  onClick={() => setFilePicker(true)}
+                >
+                  <Images className="h-4 w-4" /> Ficheiros guardados
+                </Button>
+                <BucketAssetPicker
+                  open={filePicker}
+                  onOpenChange={setFilePicker}
+                  onlyImages={false}
+                  onSelect={({ url, name }) => set("files", [...content.files, { name, url }])}
+                />
                 <input
                   ref={docInput}
                   type="file"
