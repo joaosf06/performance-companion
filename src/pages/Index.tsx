@@ -18,11 +18,13 @@ import {
   Trash2,
   FileText,
   Download,
+  Images,
 } from "lucide-react";
 import SocialLinks from "@/components/SocialLinks";
 import logoPrime11 from "@/assets/logo-prime11.png.asset.json";
 import EditableText from "@/components/site-editor/EditableText";
 import ImageField from "@/components/site-editor/ImageField";
+import BucketAssetPicker from "@/components/site-editor/BucketAssetPicker";
 import SiteEditorBar from "@/components/site-editor/SiteEditorBar";
 import { uploadSiteAsset } from "@/lib/siteAssets";
 import {
@@ -56,6 +58,8 @@ const Index = () => {
   const [snapshot, setSnapshot] = useState<HomeContent | null>(null);
   const galleryInput = useRef<HTMLInputElement>(null);
   const docInput = useRef<HTMLInputElement>(null);
+  const [galleryPicker, setGalleryPicker] = useState(false);
+  const [filePicker, setFilePicker] = useState(false);
 
   const set = <K extends keyof HomeContent>(key: K, value: HomeContent[K]) =>
     setContent({ ...content, [key]: value });
