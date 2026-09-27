@@ -18,11 +18,13 @@ import {
   Trash2,
   FileText,
   Download,
+  Images,
 } from "lucide-react";
 import SocialLinks from "@/components/SocialLinks";
 import logoPrime11 from "@/assets/logo-prime11.png.asset.json";
 import EditableText from "@/components/site-editor/EditableText";
 import ImageField from "@/components/site-editor/ImageField";
+import BucketAssetPicker from "@/components/site-editor/BucketAssetPicker";
 import SiteEditorBar from "@/components/site-editor/SiteEditorBar";
 import { uploadSiteAsset } from "@/lib/siteAssets";
 import {
@@ -56,6 +58,8 @@ const Index = () => {
   const [snapshot, setSnapshot] = useState<HomeContent | null>(null);
   const galleryInput = useRef<HTMLInputElement>(null);
   const docInput = useRef<HTMLInputElement>(null);
+  const [galleryPicker, setGalleryPicker] = useState(false);
+  const [filePicker, setFilePicker] = useState(false);
 
   const set = <K extends keyof HomeContent>(key: K, value: HomeContent[K]) =>
     setContent({ ...content, [key]: value });
@@ -510,6 +514,21 @@ const Index = () => {
                 <Button variant="outline" size="sm" className="gap-2" onClick={() => galleryInput.current?.click()}>
                   <Plus className="h-4 w-4" /> Adicionar foto
                 </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="ml-2 gap-2"
+                  onClick={() => setGalleryPicker(true)}
+                >
+                  <Images className="h-4 w-4" /> Fotos guardadas
+                </Button>
+                <BucketAssetPicker
+                  open={galleryPicker}
+                  onOpenChange={setGalleryPicker}
+                  onSelect={({ url }) =>
+                    set("gallery", [...content.gallery, { url, caption: "", x: 50, y: 50, zoom: 100 }])
+                  }
+                />
                 <input
                   ref={galleryInput}
                   type="file"
@@ -577,6 +596,20 @@ const Index = () => {
                 <Button variant="outline" size="sm" className="gap-2" onClick={() => docInput.current?.click()}>
                   <Plus className="h-4 w-4" /> Adicionar ficheiro
                 </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="ml-2 gap-2"
+                  onClick={() => setFilePicker(true)}
+                >
+                  <Images className="h-4 w-4" /> Ficheiros guardados
+                </Button>
+                <BucketAssetPicker
+                  open={filePicker}
+                  onOpenChange={setFilePicker}
+                  onlyImages={false}
+                  onSelect={({ url, name }) => set("files", [...content.files, { name, url }])}
+                />
                 <input
                   ref={docInput}
                   type="file"
