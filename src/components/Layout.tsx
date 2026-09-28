@@ -1,3 +1,4 @@
+import PageBackground from "@/components/site-editor/PageBackground";
 import { ReactNode, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
@@ -113,8 +114,10 @@ const Layout = ({ children }: { children: ReactNode }) => {
     </div>
   );
 
+  const bgKey = location.pathname.split("/")[1] || "dashboard";
   return (
     <div className="flex min-h-screen bg-background">
+      <PageBackground pageKey={bgKey} label={bgKey} />
       {/* Desktop sidebar (collapsed icon-only on md, full on lg) */}
       <aside className="fixed left-0 top-0 z-40 hidden md:flex h-screen w-16 lg:w-64 flex-col border-r border-border bg-card">
         <Link to="/" className="flex h-16 items-center justify-center lg:justify-start px-3 lg:px-6 border-b border-border hover:opacity-80 transition-opacity">
@@ -169,7 +172,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
       </header>
 
       {/* Main content */}
-      <main className="flex-1 min-w-0 w-full max-w-full overflow-x-hidden pt-14 md:pt-0 md:ml-16 lg:ml-64 flex flex-col">
+      <main className="relative z-10 flex-1 min-w-0 w-full max-w-full overflow-x-hidden pt-14 md:pt-0 md:ml-16 lg:ml-64 flex flex-col">
         <div className="flex-1 p-4 sm:p-6 lg:p-8">{children}</div>
         <footer className="border-t border-border/50 px-4 sm:px-6 lg:px-8 py-6 flex flex-col sm:flex-row items-center justify-between gap-3">
           <p className="text-xs text-muted-foreground">© {new Date().getFullYear()} Prime11</p>

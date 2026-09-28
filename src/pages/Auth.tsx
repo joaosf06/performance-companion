@@ -1,3 +1,4 @@
+import PageBackground from "@/components/site-editor/PageBackground";
 import { useState } from "react";
 import { useNavigate, Navigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -86,7 +87,8 @@ const Auth = () => {
   const inputCls = "bg-card border-border text-foreground placeholder:text-muted-foreground";
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background py-10">
+    <div className="relative flex min-h-screen items-center justify-center bg-background py-10 [&>*:not(.fixed)]:relative [&>*:not(.fixed)]:z-10">
+      <PageBackground pageKey="auth" label="Entrar / Registo" />
       <div className="w-full max-w-md space-y-8 px-6">
         <div className="text-center flex flex-col items-center">
           <img src={logoPrime11.url} alt="Prime11" className="h-16 w-auto" />
