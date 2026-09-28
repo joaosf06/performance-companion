@@ -26,6 +26,7 @@ import EditableText from "@/components/site-editor/EditableText";
 import ImageField from "@/components/site-editor/ImageField";
 import BucketAssetPicker from "@/components/site-editor/BucketAssetPicker";
 import SiteEditorBar from "@/components/site-editor/SiteEditorBar";
+import PageBackground from "@/components/site-editor/PageBackground";
 import { uploadSiteAsset } from "@/lib/siteAssets";
 import {
   useSiteContent,
@@ -105,7 +106,10 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="relative min-h-screen bg-background text-foreground">
+      <PageBackground pageKey="landing" label="Página inicial" />
+
+      <div className="relative z-10">
       {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-50 border-b border-border/50 bg-background/80 backdrop-blur-xl">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
@@ -667,6 +671,7 @@ const Index = () => {
           </p>
         </div>
       </footer>
+      </div>
 
       {canEdit && (
         <SiteEditorBar
