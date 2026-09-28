@@ -671,6 +671,7 @@ const Index = () => {
           </p>
         </div>
       </footer>
+      </div>
 
       {canEdit && (
         <SiteEditorBar
