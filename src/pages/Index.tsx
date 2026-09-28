@@ -26,6 +26,7 @@ import EditableText from "@/components/site-editor/EditableText";
 import ImageField from "@/components/site-editor/ImageField";
 import BucketAssetPicker from "@/components/site-editor/BucketAssetPicker";
 import SiteEditorBar from "@/components/site-editor/SiteEditorBar";
+import PageBackground from "@/components/site-editor/PageBackground";
 import { uploadSiteAsset } from "@/lib/siteAssets";
 import {
   useSiteContent,
