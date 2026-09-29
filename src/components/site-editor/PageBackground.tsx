@@ -16,6 +16,7 @@ import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
 import BucketAssetPicker from "@/components/site-editor/BucketAssetPicker";
 import { uploadSiteAsset } from "@/lib/siteAssets";
+import LogoEditor from "@/components/site-editor/LogoEditor";
 import {
   usePageBackground,
   DEFAULT_PAGE_BACKGROUND,
@@ -99,6 +100,7 @@ const PageBackground = ({ pageKey, label }: PageBackgroundProps) => {
 
   return (
     <>
+      <LogoEditor />
       {active?.url && (
         <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden" aria-hidden="true">
           <img
