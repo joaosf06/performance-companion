@@ -17,7 +17,9 @@ import {
   CalendarDays,
   Settings as SettingsIcon,
   Menu,
+  Lock,
 } from "lucide-react";
+import { usePlayerPageLocks } from "@/hooks/usePlayerPageLocks";
 import { Link, useLocation } from "react-router-dom";
 import SocialLinks from "@/components/SocialLinks";
 import SiteLogo from "@/components/site-editor/SiteLogo";
@@ -51,7 +53,9 @@ const Layout = ({ children }: { children: ReactNode }) => {
   ];
 
 
-  const links = role === "coach" ? coachLinks : playerLinks;
+  const { locks } = usePlayerPageLocks();
+  const links = role === "coach" ? coachLinks : playerLinks.filter((l) => !locks[l.path]);
+  const pageLocked = role !== "coach" && !!locks["/" + (location.pathname.split("/")[1] || "")];
 
   const NavList = ({ compact = false, onNavigate }: { compact?: boolean; onNavigate?: () => void }) => (
     <nav className="flex-1 space-y-1 p-3">
@@ -173,7 +177,18 @@ const Layout = ({ children }: { children: ReactNode }) => {
 
       {/* Main content */}
       <main className="relative z-10 flex-1 min-w-0 w-full max-w-full overflow-x-hidden pt-14 md:pt-0 md:ml-16 lg:ml-64 flex flex-col">
-        <div className="flex-1 p-4 sm:p-6 lg:p-8">{children}</div>
+        <div className="flex-1 p-4 sm:p-6 lg:p-8">
+          {pageLocked ? (
+            <div className="flex flex-col items-center justify-center py-24 text-center">
+              <Lock className="h-10 w-10 text-primary mb-4" />
+              <h2 className="text-xl font-bold text-foreground">Página bloqueada</h2>
+              <p className="text-muted-foreground mt-2">Esta página está temporariamente indisponível.</p>
+              <Link to="/dashboard" className="mt-4 text-sm text-primary hover:underline">Voltar ao Dashboard</Link>
+            </div>
+          ) : (
+            children
+          )}
+        </div>
         <footer className="border-t border-border/50 px-4 sm:px-6 lg:px-8 py-6 flex flex-col sm:flex-row items-center justify-between gap-3">
           <p className="text-xs text-muted-foreground">© {new Date().getFullYear()} Prime11</p>
           <SocialLinks />

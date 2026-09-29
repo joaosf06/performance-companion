@@ -11,6 +11,7 @@ import { Users, FileText, AlertTriangle, ShieldCheck } from "lucide-react";
 import { Link } from "react-router-dom";
 import { format, startOfWeek } from "date-fns";
 import { toast } from "sonner";
+import PlayerPageLocksCard from "@/components/PlayerPageLocksCard";
 
 const CoachDashboard = () => {
   const { user, profile } = useAuth();
@@ -169,6 +170,8 @@ const CoachDashboard = () => {
           </CardContent>
         </Card>
       </div>
+
+      <PlayerPageLocksCard />
 
       {recentAthletes.length > 0 && (
         <Card>
