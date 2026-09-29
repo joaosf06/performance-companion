@@ -21,7 +21,7 @@ import {
   Images,
 } from "lucide-react";
 import SocialLinks from "@/components/SocialLinks";
-import logoPrime11 from "@/assets/logo-prime11.png.asset.json";
+import SiteLogo from "@/components/site-editor/SiteLogo";
 import EditableText from "@/components/site-editor/EditableText";
 import ImageField from "@/components/site-editor/ImageField";
 import BucketAssetPicker from "@/components/site-editor/BucketAssetPicker";
@@ -114,7 +114,7 @@ const Index = () => {
       <nav className="fixed top-0 left-0 right-0 z-50 border-b border-border/50 bg-background/80 backdrop-blur-xl">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
           <Link to="/" className="flex items-center">
-            <img src={logoPrime11.url} alt="Prime11" className="h-10 w-auto" />
+            <SiteLogo className="h-10 w-auto" />
           </Link>
           <div className="flex items-center gap-4">
             <a href="#sobre" className="hidden text-sm text-muted-foreground hover:text-foreground transition-colors sm:inline-block">Sobre</a>
@@ -664,7 +664,7 @@ const Index = () => {
       {/* Footer */}
       <footer className="border-t border-border/50 py-10 px-6">
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-6 sm:flex-row">
-          <img src={logoPrime11.url} alt="Prime11" className="h-10 w-auto" />
+          <SiteLogo className="h-10 w-auto" />
           <SocialLinks />
           <p className="text-sm text-muted-foreground">
             © {new Date().getFullYear()} Prime11. Todos os direitos reservados.

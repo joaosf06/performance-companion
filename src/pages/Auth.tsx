@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import logoPrime11 from "@/assets/logo-prime11.png.asset.json";
+import SiteLogo from "@/components/site-editor/SiteLogo";
 
 const Auth = () => {
   const { user } = useAuth();
@@ -91,7 +91,7 @@ const Auth = () => {
       <PageBackground pageKey="auth" label="Entrar / Registo" />
       <div className="w-full max-w-md space-y-8 px-6">
         <div className="text-center flex flex-col items-center">
-          <img src={logoPrime11.url} alt="Prime11" className="h-16 w-auto" />
+          <SiteLogo className="h-16 w-auto" />
           <p className="mt-2 text-sm text-muted-foreground">
             {isLogin ? "Entra na tua conta" : "Cria a tua conta"}
           </p>
