@@ -10,7 +10,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Images, Upload, RotateCcw, Loader2, Sparkles } from "lucide-react";
+import { Images, Upload, RotateCcw, Loader2, Sparkles, Smartphone, Tablet, Monitor } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
 import BucketAssetPicker from "@/components/site-editor/BucketAssetPicker";
@@ -21,8 +21,16 @@ import {
   setSiteLogoPreview,
   DEFAULT_SITE_LOGO,
   FALLBACK_LOGO_URL,
+  type LogoDevice,
+  type LogoPlacement,
   type SiteLogo,
 } from "@/hooks/useSiteLogo";
+
+const DEVICES: { key: LogoDevice; label: string; icon: typeof Smartphone }[] = [
+  { key: "mobile", label: "Telemóvel", icon: Smartphone },
+  { key: "tablet", label: "iPad", icon: Tablet },
+  { key: "desktop", label: "Computador", icon: Monitor },
+];
 
 const LogoEditor = () => {
   const { role } = useAuth();
@@ -32,6 +40,7 @@ const LogoEditor = () => {
   const [snapshot, setSnapshot] = useState<SiteLogo>(logo);
   const [picker, setPicker] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [device, setDevice] = useState<LogoDevice>("desktop");
   const fileRef = useRef<HTMLInputElement>(null);
 
   if (role !== "coach") return null;
@@ -40,6 +49,10 @@ const LogoEditor = () => {
     const next = { ...draft, ...patch };
     setDraft(next);
     setSiteLogoPreview(next);
+  };
+
+  const updatePlacement = (patch: Partial<LogoPlacement>) => {
+    update({ [device]: { ...draft[device], ...patch } });
   };
 
   const start = () => {
@@ -94,7 +107,7 @@ const LogoEditor = () => {
           <DialogHeader>
             <DialogTitle>Logótipo</DialogTitle>
             <DialogDescription>
-              Muda a imagem, o tamanho e a posição. Aplica-se em todas as páginas.
+              A imagem aplica-se em todas as páginas. O tamanho e a posição são independentes em cada dispositivo.
             </DialogDescription>
           </DialogHeader>
 
@@ -104,10 +117,26 @@ const LogoEditor = () => {
               alt="Prime11"
               className="h-10 w-auto"
               style={{
-                transform: `translate(${draft.x}px, ${draft.y}px) scale(${draft.size / 100})`,
+                transform: `translate(${draft[device].x}px, ${draft[device].y}px) scale(${draft[device].size / 100})`,
                 transformOrigin: "left center",
               }}
             />
+          </div>
+
+          <div className="grid grid-cols-3 gap-1 rounded-md bg-muted p-1" aria-label="Dispositivo a editar">
+            {DEVICES.map(({ key, label, icon: Icon }) => (
+              <Button
+                key={key}
+                type="button"
+                size="sm"
+                variant={device === key ? "secondary" : "ghost"}
+                className="h-auto min-w-0 flex-col gap-1 px-1 py-2 text-xs"
+                onClick={() => setDevice(key)}
+              >
+                <Icon className="h-4 w-4" />
+                <span className="truncate">{label}</span>
+              </Button>
+            ))}
           </div>
 
           <div className="flex flex-wrap gap-2">
@@ -117,7 +146,7 @@ const LogoEditor = () => {
             <Button size="sm" variant="outline" className="gap-1" disabled={busy} onClick={() => fileRef.current?.click()}>
               {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />} Carregar
             </Button>
-            <Button size="sm" variant="ghost" className="gap-1" onClick={() => update(DEFAULT_SITE_LOGO)}>
+            <Button size="sm" variant="ghost" className="gap-1" onClick={() => updatePlacement(DEFAULT_SITE_LOGO[device])}>
               <RotateCcw className="h-4 w-4" /> Original
             </Button>
             <input
@@ -141,9 +170,9 @@ const LogoEditor = () => {
             <div key={key} className="space-y-2">
               <div className="flex justify-between text-sm">
                 <Label>{label}</Label>
-                <span className="text-muted-foreground">{draft[key]}{unit}</span>
+                <span className="text-muted-foreground">{draft[device][key]}{unit}</span>
               </div>
-              <Slider min={min} max={max} step={1} value={[draft[key]]} onValueChange={([v]) => update({ [key]: v })} />
+              <Slider min={min} max={max} step={1} value={[draft[device][key]]} onValueChange={([v]) => updatePlacement({ [key]: v })} />
             </div>
           ))}
 

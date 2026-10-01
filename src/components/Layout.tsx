@@ -19,6 +19,7 @@ import {
   Menu,
   Lock,
   Database as DatabaseIcon,
+  UserPlus,
 } from "lucide-react";
 import { usePlayerPageLocks } from "@/hooks/usePlayerPageLocks";
 import { Link, useLocation } from "react-router-dom";
@@ -36,6 +37,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
     { path: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
     { path: "/athletes", label: "Atletas", icon: Users },
     { path: "/database", label: "Base de Dados", icon: DatabaseIcon },
+    { path: "/auth?preview=signup", label: "Editar criação de conta", icon: UserPlus },
     { path: "/reports", label: "Relatórios", icon: FileText },
     { path: "/custom-questionnaires", label: "Questionários", icon: ClipboardList },
     { path: "/library", label: "Biblioteca", icon: BookOpen },

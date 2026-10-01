@@ -1,6 +1,6 @@
 import PageBackground from "@/components/site-editor/PageBackground";
-import { useState } from "react";
-import { useNavigate, Navigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate, Navigate, Link, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -8,12 +8,19 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import SiteLogo from "@/components/site-editor/SiteLogo";
+import { ArrowLeft, Eye } from "lucide-react";
 
 const Auth = () => {
-  const { user } = useAuth();
+  const { user, role, loading: authLoading } = useAuth();
+  const [searchParams] = useSearchParams();
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const isCoachPreview = !!user && role === "coach";
+
+  useEffect(() => {
+    if (isCoachPreview && searchParams.get("preview") === "signup") setIsLogin(false);
+  }, [isCoachPreview, searchParams]);
 
   // login
   const [email, setEmail] = useState("");
@@ -29,10 +36,15 @@ const Auth = () => {
   const [ageGroup, setAgeGroup] = useState("");
   const [currentClub, setCurrentClub] = useState("");
 
-  if (user) return <Navigate to="/dashboard" replace />;
+  if (authLoading) return null;
+  if (user && role !== "coach") return <Navigate to="/dashboard" replace />;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isCoachPreview) {
+      toast.info("Estás a pré-visualizar a página. O formulário não foi enviado.");
+      return;
+    }
     setLoading(true);
 
     try {
@@ -89,6 +101,17 @@ const Auth = () => {
   return (
     <div className="relative flex min-h-screen items-center justify-center bg-background py-10 [&>*:not(.fixed)]:relative [&>*:not(.fixed)]:z-10">
       <PageBackground pageKey="auth" label="Entrar / Registo" />
+      {isCoachPreview && (
+        <div className="fixed inset-x-0 top-0 z-50 flex min-h-12 items-center justify-between gap-3 border-b border-border bg-card px-3 py-2 sm:px-6">
+          <span className="flex min-w-0 items-center gap-2 text-sm font-medium text-foreground">
+            <Eye className="h-4 w-4 shrink-0 text-primary" />
+            <span className="truncate">Pré-visualização da criação de conta</span>
+          </span>
+          <Button asChild size="sm" variant="outline" className="shrink-0">
+            <Link to="/dashboard"><ArrowLeft className="mr-2 h-4 w-4" />Voltar</Link>
+          </Button>
+        </div>
+      )}
       <div className="w-full max-w-md space-y-8 px-6">
         <div className="text-center flex flex-col items-center">
           <SiteLogo className="h-16 w-auto" />
@@ -153,7 +176,7 @@ const Auth = () => {
           </div>
 
           <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? "A processar..." : isLogin ? "Entrar" : "Criar conta"}
+            {isCoachPreview ? "Pré-visualização — não enviar" : loading ? "A processar..." : isLogin ? "Entrar" : "Criar conta"}
           </Button>
         </form>
 
