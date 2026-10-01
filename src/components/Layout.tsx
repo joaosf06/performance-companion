@@ -18,6 +18,7 @@ import {
   Settings as SettingsIcon,
   Menu,
   Lock,
+  Database as DatabaseIcon,
 } from "lucide-react";
 import { usePlayerPageLocks } from "@/hooks/usePlayerPageLocks";
 import { Link, useLocation } from "react-router-dom";
@@ -34,6 +35,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
   const coachLinks = [
     { path: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
     { path: "/athletes", label: "Atletas", icon: Users },
+    { path: "/database", label: "Base de Dados", icon: DatabaseIcon },
     { path: "/reports", label: "Relatórios", icon: FileText },
     { path: "/custom-questionnaires", label: "Questionários", icon: ClipboardList },
     { path: "/library", label: "Biblioteca", icon: BookOpen },

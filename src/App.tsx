@@ -22,6 +22,7 @@ const AnswerQuestionnaire = lazy(() => import("./pages/AnswerQuestionnaire"));
 const Workouts = lazy(() => import("./pages/Workouts"));
 const Settings = lazy(() => import("./pages/Settings"));
 const Bookings = lazy(() => import("./pages/Bookings"));
+const AthleteDatabase = lazy(() => import("./pages/AthleteDatabase"));
 
 const queryClient = new QueryClient();
 
@@ -64,6 +65,7 @@ const App = () => (
                 <Route path="/workouts" element={<Workouts />} />
                 <Route path="/settings" element={<Settings />} />
                 <Route path="/bookings" element={<Bookings />} />
+                <Route path="/database" element={<AthleteDatabase />} />
               </Route>
               <Route path="/treino-gratis" element={<FreeTrial />} />
               <Route path="*" element={<NotFound />} />
