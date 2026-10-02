@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { Images, Upload, RotateCcw, Loader2, Sparkles, Smartphone, Tablet, Monitor } from "lucide-react";
 import { toast } from "sonner";
+import { useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import BucketAssetPicker from "@/components/site-editor/BucketAssetPicker";
 import { uploadSiteAsset } from "@/lib/siteAssets";
@@ -21,6 +22,8 @@ import {
   setSiteLogoPreview,
   DEFAULT_SITE_LOGO,
   FALLBACK_LOGO_URL,
+  getPagePlacements,
+  pageKeyFromPath,
   type LogoDevice,
   type LogoPlacement,
   type SiteLogo,
@@ -42,6 +45,8 @@ const LogoEditor = () => {
   const [busy, setBusy] = useState(false);
   const [device, setDevice] = useState<LogoDevice>("desktop");
   const fileRef = useRef<HTMLInputElement>(null);
+  const page = pageKeyFromPath(useLocation().pathname);
+  const current = getPagePlacements(draft, page)[device];
 
   if (role !== "coach") return null;
 
@@ -52,7 +57,8 @@ const LogoEditor = () => {
   };
 
   const updatePlacement = (patch: Partial<LogoPlacement>) => {
-    update({ [device]: { ...draft[device], ...patch } });
+    const pp = getPagePlacements(draft, page);
+    update({ pages: { ...(draft.pages ?? {}), [page]: { ...pp, [device]: { ...pp[device], ...patch } } } });
   };
 
   const start = () => {
@@ -107,7 +113,7 @@ const LogoEditor = () => {
           <DialogHeader>
             <DialogTitle>Logótipo</DialogTitle>
             <DialogDescription>
-              A imagem aplica-se em todas as páginas. O tamanho e a posição são independentes em cada dispositivo.
+              A imagem aplica-se em todas as páginas. O tamanho e a posição são independentes em cada página e em cada dispositivo.
             </DialogDescription>
           </DialogHeader>
 
@@ -117,7 +123,7 @@ const LogoEditor = () => {
               alt="Prime11"
               className="h-10 w-auto"
               style={{
-                transform: `translate(${draft[device].x}px, ${draft[device].y}px) scale(${draft[device].size / 100})`,
+                transform: `translate(${current.x}px, ${current.y}px) scale(${current.size / 100})`,
                 transformOrigin: "left center",
               }}
             />
@@ -170,9 +176,9 @@ const LogoEditor = () => {
             <div key={key} className="space-y-2">
               <div className="flex justify-between text-sm">
                 <Label>{label}</Label>
-                <span className="text-muted-foreground">{draft[device][key]}{unit}</span>
+                <span className="text-muted-foreground">{current[key]}{unit}</span>
               </div>
-              <Slider min={min} max={max} step={1} value={[draft[device][key]]} onValueChange={([v]) => updatePlacement({ [key]: v })} />
+              <Slider min={min} max={max} step={1} value={[current[key]]} onValueChange={([v]) => updatePlacement({ [key]: v })} />
             </div>
           ))}
 

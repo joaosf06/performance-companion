@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { useSiteLogo, FALLBACK_LOGO_URL, type LogoDevice } from "@/hooks/useSiteLogo";
+import { useLocation } from "react-router-dom";
+import { useSiteLogo, FALLBACK_LOGO_URL, getPagePlacements, pageKeyFromPath, type LogoDevice } from "@/hooks/useSiteLogo";
 
 const getDevice = (): LogoDevice => {
   if (typeof window === "undefined") return "desktop";
@@ -10,6 +11,7 @@ const getDevice = (): LogoDevice => {
 
 const SiteLogo = ({ className = "h-10 w-auto" }: { className?: string }) => {
   const logo = useSiteLogo();
+  const { pathname } = useLocation();
   const [device, setDevice] = useState<LogoDevice>(getDevice);
 
   useEffect(() => {
@@ -18,7 +20,7 @@ const SiteLogo = ({ className = "h-10 w-auto" }: { className?: string }) => {
     return () => window.removeEventListener("resize", updateDevice);
   }, []);
 
-  const placement = logo[device];
+  const placement = getPagePlacements(logo, pageKeyFromPath(pathname))[device];
   return (
     <img
       src={logo.url || FALLBACK_LOGO_URL}

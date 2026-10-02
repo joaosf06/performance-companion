@@ -9,7 +9,14 @@ export type SiteLogo = {
   mobile: LogoPlacement;
   tablet: LogoPlacement;
   desktop: LogoPlacement;
+  pages?: Record<string, PagePlacements>;
 };
+export type PagePlacements = { mobile: LogoPlacement; tablet: LogoPlacement; desktop: LogoPlacement };
+
+export const pageKeyFromPath = (pathname: string) => pathname.split("/")[1] || "landing";
+
+export const getPagePlacements = (logo: SiteLogo, page: string): PagePlacements =>
+  logo.pages?.[page] ?? { mobile: logo.mobile, tablet: logo.tablet, desktop: logo.desktop };
 
 const DEFAULT_PLACEMENT: LogoPlacement = { size: 100, x: 0, y: 0 };
 export const DEFAULT_SITE_LOGO: SiteLogo = {
@@ -48,6 +55,12 @@ const normalizeLogo = (value: unknown): SiteLogo => {
     mobile: placement(stored.mobile),
     tablet: placement(stored.tablet),
     desktop: placement(stored.desktop),
+    pages: Object.fromEntries(
+      Object.entries((stored.pages ?? {}) as Record<string, Partial<PagePlacements>>).map(([k, p]) => [
+        k,
+        { mobile: placement(p?.mobile), tablet: placement(p?.tablet), desktop: placement(p?.desktop) },
+      ]),
+    ),
   };
 };
 
