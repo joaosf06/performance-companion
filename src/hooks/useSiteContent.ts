@@ -5,6 +5,7 @@ export type ImageContent = { url: string; x: number; y: number; zoom: number };
 export type CardContent = { title: string; description: string };
 export type GalleryItem = { url: string; caption: string; x: number; y: number; zoom: number };
 export type FileItem = { name: string; url: string };
+export type PlanItem = { name: string; badge: string; featured: boolean; description: string; features: string[]; ctaLabel: string; ctaLink: string };
 export type TextAlign = "left" | "center" | "right";
 
 export type HomeContent = {
@@ -25,6 +26,10 @@ export type HomeContent = {
   servicesTitle: string;
   servicesSubtitle: string;
   serviceCards: CardContent[];
+  plansEyebrow: string;
+  plansTitle: string;
+  plansSubtitle: string;
+  plans: PlanItem[];
   teamEyebrow: string;
   teamTitle: string;
   teamSubtitle: string;
@@ -98,6 +103,14 @@ export const DEFAULT_HOME_CONTENT: HomeContent = {
         "Cada utilizador tem um painel adaptado ao seu perfil. Jogadores veem os seus dados; treinadores gerem a sua equipa.",
     },
   ],
+  plansEyebrow: "Planos",
+  plansTitle: "Escolhe o teu plano",
+  plansSubtitle: "Conhece as diferenças entre cada plano e tudo o que a Prime11 te pode oferecer.",
+  plans: [
+    { name: "Base", badge: "Mais procurado", featured: false, description: "Para atletas que querem começar um acompanhamento individual estruturado.", features: ["Treino individual técnico", "Relatórios de treino", "Questionários semanais", "Acesso à biblioteca de conteúdos"], ctaLabel: "Pedir treino grátis", ctaLink: "/treino-gratis" },
+    { name: "Performance", badge: "Mais procurado", featured: true, description: "Acompanhamento completo para quem quer evoluir de forma consistente.", features: ["Tudo do plano Base", "Treinos complementares de ginásio", "Monitorização de carga interna", "Mensagens diretas com o treinador", "Marcações prioritárias"], ctaLabel: "Pedir treino grátis", ctaLink: "/treino-gratis" },
+    { name: "Elite", badge: "Mais procurado", featured: false, description: "Desenvolvimento físico, técnico e mental ao mais alto nível.", features: ["Tudo do plano Performance", "Plano totalmente personalizado", "Análise de evolução detalhada", "Documentos e relatórios pessoais", "Acompanhamento contínuo"], ctaLabel: "Pedir treino grátis", ctaLink: "/treino-gratis" },
+  ],
   teamEyebrow: "Equipa",
   teamTitle: "Quem está por trás da Prime11",
   teamSubtitle:
@@ -124,6 +137,7 @@ const merge = (raw: unknown): HomeContent => {
     heroCard: { ...DEFAULT_HOME_CONTENT.heroCard, ...(v.heroCard ?? {}) },
     aboutCards: v.aboutCards?.length ? v.aboutCards : DEFAULT_HOME_CONTENT.aboutCards,
     serviceCards: v.serviceCards?.length ? v.serviceCards : DEFAULT_HOME_CONTENT.serviceCards,
+    plans: Array.isArray(v.plans) ? v.plans : DEFAULT_HOME_CONTENT.plans,
     gallery: v.gallery ?? [],
     files: v.files ?? [],
   };
