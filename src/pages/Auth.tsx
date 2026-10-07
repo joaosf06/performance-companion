@@ -35,9 +35,38 @@ const Auth = () => {
   const [position, setPosition] = useState("");
   const [ageGroup, setAgeGroup] = useState("");
   const [currentClub, setCurrentClub] = useState("");
+  const [sentTo, setSentTo] = useState<string | null>(null);
 
   if (authLoading) return null;
   if (user && role !== "coach") return <Navigate to="/dashboard" replace />;
+
+  if (sentTo) {
+    const resend = async () => {
+      const { error } = await supabase.auth.resend({
+        type: "signup",
+        email: sentTo,
+        options: { emailRedirectTo: window.location.origin + "/auth" },
+      });
+      if (error) toast.error(error.message);
+      else toast.success("Email reenviado.");
+    };
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background px-6">
+        <div className="w-full max-w-md space-y-6 rounded-lg border border-border bg-card p-8 text-center">
+          <SiteLogo className="mx-auto h-14 w-auto" />
+          <h1 className="font-display text-2xl font-bold text-foreground">Confirma o teu email</h1>
+          <p className="text-sm text-muted-foreground">
+            Conta criada! Enviámos um link de confirmação para <strong className="text-foreground">{sentTo}</strong>.
+            Abre o email (vê também a pasta de spam) e clica no link para ativar a conta.
+          </p>
+          <div className="flex flex-col gap-2">
+            <Button onClick={() => { setSentTo(null); setIsLogin(true); }}>Já confirmei — Entrar</Button>
+            <Button variant="outline" onClick={resend}>Reenviar email</Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
