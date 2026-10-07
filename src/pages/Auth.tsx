@@ -79,6 +79,7 @@ const Auth = () => {
     try {
       if (isLogin) {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error?.message?.toLowerCase().includes("not confirmed")) throw new Error("Ainda não confirmaste o teu email. Verifica a tua caixa de correio.");
         if (error) throw error;
         toast.success("Login efetuado com sucesso!");
         navigate("/dashboard", { replace: true });
