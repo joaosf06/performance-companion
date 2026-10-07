@@ -124,7 +124,7 @@ const LogoEditor = () => {
               className="h-10 w-auto"
               style={{
                 transform: `translate(${current.x}px, ${current.y}px) scale(${current.size / 100})`,
-                transformOrigin: "left center",
+                transformOrigin: "center center",
               }}
             />
           </div>
