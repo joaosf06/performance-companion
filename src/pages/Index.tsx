@@ -454,7 +454,47 @@ const Index = () => {
               multiline
               className="text-muted-foreground leading-relaxed text-base"
             />
+              </div>
+          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {content.teamMembers.map((m, i) => {
+              const upd = (patch: Partial<typeof m>) =>
+                set("teamMembers", content.teamMembers.map((x, j) => (j === i ? { ...x, ...patch } : x)));
+              return (
+                <div key={i} className="relative overflow-hidden rounded-xl border border-border/50 bg-card">
+                  <div className="relative aspect-[4/5] overflow-hidden bg-muted">
+                    {m.photo.url || editing ? (
+                      <ImageField value={m.photo} editing={editing} onChange={(v) => upd({ photo: v })}
+                        alt={m.name} className="h-full w-full object-cover" controlsClassName="left-3 top-3" />
+                    ) : (
+                      <div className="flex h-full items-center justify-center"><Users className="h-12 w-12 text-muted-foreground" /></div>
+                    )}
+                  </div>
+                  <div className="p-6 text-center">
+                    <EditableText as="h3" editing={editing} value={m.name} onChange={(v) => upd({ name: v })}
+                      className="text-lg font-bold text-foreground" />
+                    <EditableText editing={editing} value={m.role} onChange={(v) => upd({ role: v })}
+                      className="mt-1 text-xs font-medium uppercase tracking-widest text-primary" />
+                    <EditableText as="p" editing={editing} value={m.bio} onChange={(v) => upd({ bio: v })}
+                      multiline className="mt-3 text-sm text-muted-foreground leading-relaxed" />
+                    {editing && (
+                      <Button type="button" variant="ghost" size="sm" className="mt-4 text-destructive"
+                        onClick={() => set("teamMembers", content.teamMembers.filter((_, j) => j !== i))}>
+                        <Trash2 className="mr-1 h-4 w-4" /> Remover treinador
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
           </div>
+          {editing && (
+            <div className="mt-6 text-center">
+              <Button type="button" variant="outline"
+                onClick={() => set("teamMembers", [...content.teamMembers, { name: "Nome", role: "Treinador", bio: "Breve texto.", photo: { url: "", x: 50, y: 50, zoom: 100 } }])}>
+                <Plus className="mr-1 h-4 w-4" /> Adicionar treinador
+              </Button>
+            </div>
+          )}
         </div>
       </section>
 

@@ -34,6 +34,7 @@ export type HomeContent = {
   teamTitle: string;
   teamSubtitle: string;
   teamText: string;
+  teamMembers: TeamMember[];
   galleryTitle: string;
   gallery: GalleryItem[];
   filesTitle: string;
@@ -45,6 +46,8 @@ export type HomeContent = {
 
 const HERO_IMAGE =
   "https://nbiwobyvwdtrchqzgrix.supabase.co/storage/v1/object/public/site-assets/IMG_5656.jpeg";
+
+export type TeamMember = { name: string; role: string; bio: string; photo: ImageContent };
 
 export const DEFAULT_HOME_CONTENT: HomeContent = {
   heroBadge: "Treino Individual de Elite",
@@ -117,6 +120,9 @@ export const DEFAULT_HOME_CONTENT: HomeContent = {
     "Uma equipa apaixonada por futebol e tecnologia, comprometida em transformar o treino individual.",
   teamText:
     "A Prime 11 nasceu da necessidade de criar um ambiente de desenvolvimento verdadeiramente focado no atleta.\n\nNum contexto onde muitos jogadores treinam sem acompanhamento individual, estrutura ou feedback contínuo, a Prime 11 surge com uma abordagem baseada em metodologia, exigência e evolução constante. Um dos nossos objetivos é criar uma ponte entre jogadores e treinadores de forma a que a evolução seja o mais eficaz possível.\n\nMais do que treinos, procuramos oferecer um sistema de desenvolvimento físico, técnico e mental, onde cada atleta é acompanhado de forma individual para atingir o seu máximo potencial através de acesso a dados, relatórios e comunicação contínua.",
+  teamMembers: [
+    { name: "João Figueiredo", role: "Fundador & Treinador", bio: "Escreve aqui um breve texto sobre ti.", photo: { url: "", x: 50, y: 50, zoom: 100 } },
+  ],
   galleryTitle: "Galeria",
   gallery: [],
   filesTitle: "Documentos",
@@ -138,6 +144,7 @@ const merge = (raw: unknown): HomeContent => {
     aboutCards: v.aboutCards?.length ? v.aboutCards : DEFAULT_HOME_CONTENT.aboutCards,
     serviceCards: v.serviceCards?.length ? v.serviceCards : DEFAULT_HOME_CONTENT.serviceCards,
     plans: Array.isArray(v.plans) ? v.plans : DEFAULT_HOME_CONTENT.plans,
+    teamMembers: Array.isArray(v.teamMembers) ? v.teamMembers : DEFAULT_HOME_CONTENT.teamMembers,
     gallery: v.gallery ?? [],
     files: v.files ?? [],
   };
