@@ -28,7 +28,7 @@ const SiteLogo = ({ className = "h-10 w-auto" }: { className?: string }) => {
       className={className}
       style={{
         transform: `translate(${placement.x}px, ${placement.y}px) scale(${placement.size / 100})`,
-        transformOrigin: "left center",
+        transformOrigin: "center center",
       }}
     />
   );

@@ -135,9 +135,6 @@ const Auth = () => {
       <div className="w-full max-w-md space-y-8 px-6">
         <div className="text-center flex flex-col items-center">
           <SiteLogo className="h-16 w-auto" />
-          <p className="mt-2 text-sm text-muted-foreground">
-            {isLogin ? "Entra na tua conta" : "Cria a tua conta"}
-          </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
