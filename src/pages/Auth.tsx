@@ -58,36 +58,26 @@ const Auth = () => {
           email,
           password,
           options: {
-            data: { full_name: fullName },
-            emailRedirectTo: window.location.origin,
+            data: {
+              full_name: fullName,
+              birth_date: birthDate,
+              phone,
+              guardian_phone: guardianPhone,
+              instagram,
+              position,
+              age_group: ageGroup,
+              current_club: currentClub,
+            },
+            emailRedirectTo: window.location.origin + "/auth",
           },
         });
         if (error) throw error;
 
-        if (data.user) {
-          const { error: roleError } = await supabase.from("user_roles").insert({
-            user_id: data.user.id,
-            role: "player" as const,
-          });
-          if (roleError) throw roleError;
-
-          await supabase
-            .from("profiles")
-            .update({
-              full_name: fullName,
-              birth_date: birthDate || null,
-              phone: phone || null,
-              guardian_phone: guardianPhone || null,
-              instagram: instagram || null,
-              position: position || null,
-              age_group: ageGroup || null,
-              current_club: currentClub || null,
-            })
-            .eq("user_id", data.user.id);
+        if (data.session) {
+          navigate("/dashboard", { replace: true });
+        } else {
+          setSentTo(email);
         }
-
-        toast.success("Conta criada com sucesso! Confirma o teu email.");
-        navigate("/dashboard", { replace: true });
       }
     } catch (error: any) {
       toast.error(error.message || "Ocorreu um erro");
