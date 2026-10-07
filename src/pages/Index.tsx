@@ -454,7 +454,7 @@ const Index = () => {
               multiline
               className="text-muted-foreground leading-relaxed text-base"
             />
-              </div>
+          </div>
           <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {content.teamMembers.map((m, i) => {
               const upd = (patch: Partial<typeof m>) =>
