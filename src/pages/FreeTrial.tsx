@@ -117,7 +117,7 @@ const FreeTrial = () => {
           <Link to="/" className="flex items-center">
             <SiteLogo className="h-10 w-auto" />
           </Link>
-          <Link to="/auth">
+          <Link to="/auth?mode=login">
             <Button size="sm">Entrar</Button>
           </Link>
         </div>

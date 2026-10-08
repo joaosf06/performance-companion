@@ -20,6 +20,9 @@ const Auth = () => {
 
   useEffect(() => {
     if (isCoachPreview && searchParams.get("preview") === "signup") setIsLogin(false);
+    const mode = searchParams.get("mode");
+    if (mode === "signup") setIsLogin(false);
+    else if (mode === "login") setIsLogin(true);
   }, [isCoachPreview, searchParams]);
 
   // login
