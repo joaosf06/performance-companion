@@ -126,7 +126,7 @@ const Index = () => {
                 <Button size="sm">Dashboard</Button>
               </Link>
             ) : (
-              <Link to="/auth">
+              <Link to="/auth?mode=login">
                 <Button size="sm">Entrar</Button>
               </Link>
             )}
@@ -218,7 +218,7 @@ const Index = () => {
                   <ChevronRight className="h-4 w-4" />
                 </Button>
               </Link>
-              <Link to="/auth">
+              <Link to="/auth?mode=signup">
                 <Button variant="outline" size="lg" className="text-base px-8 bg-background/40 backdrop-blur-sm">
                   <EditableText
                     editing={editing}
@@ -690,7 +690,7 @@ const Index = () => {
             className="mt-4 text-muted-foreground text-lg"
           />
           <div className="mt-8">
-            <Link to="/auth">
+            <Link to="/auth?mode=signup">
               <Button size="lg" className="gap-2 text-base px-10">
                 <EditableText
                   editing={editing}
