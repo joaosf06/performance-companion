@@ -26,6 +26,7 @@ import EditableText from "@/components/site-editor/EditableText";
 import ImageField from "@/components/site-editor/ImageField";
 import BucketAssetPicker from "@/components/site-editor/BucketAssetPicker";
 import SiteEditorBar from "@/components/site-editor/SiteEditorBar";
+import EventsSection from "@/components/EventsSection";
 import PlansSection from "@/components/site-editor/PlansSection";
 import PageBackground from "@/components/site-editor/PageBackground";
 import { uploadSiteAsset } from "@/lib/siteAssets";
@@ -418,6 +419,8 @@ const Index = () => {
       </section>
 
       <PlansSection content={content} editing={editing} set={set} />
+
+      <EventsSection />
 
       {/* Equipa */}
       <section id="equipa" className="border-t border-border/50 py-24 px-6">
