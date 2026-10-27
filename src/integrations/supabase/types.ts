@@ -494,6 +494,77 @@ export type Database = {
         }
         Relationships: []
       }
+      event_registrations: {
+        Row: {
+          block_id: string
+          created_at: string
+          data: Json
+          event_id: string
+          id: string
+        }
+        Insert: {
+          block_id: string
+          created_at?: string
+          data?: Json
+          event_id: string
+          id?: string
+        }
+        Update: {
+          block_id?: string
+          created_at?: string
+          data?: Json
+          event_id?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_registrations_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      events: {
+        Row: {
+          blocks: Json
+          cover_url: string | null
+          created_at: string
+          created_by: string | null
+          id: string
+          published: boolean
+          slug: string
+          subtitle: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          blocks?: Json
+          cover_url?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          published?: boolean
+          slug: string
+          subtitle?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Update: {
+          blocks?: Json
+          cover_url?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          published?: boolean
+          slug?: string
+          subtitle?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       free_trial_requests: {
         Row: {
           age: number
