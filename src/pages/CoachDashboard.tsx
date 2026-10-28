@@ -12,6 +12,7 @@ import { Link } from "react-router-dom";
 import { format, startOfWeek } from "date-fns";
 import { toast } from "sonner";
 import PlayerPageLocksCard from "@/components/PlayerPageLocksCard";
+import EventRegistrationsSummaryCard from "@/components/EventRegistrationsSummaryCard";
 
 const CoachDashboard = () => {
   const { user, profile } = useAuth();
@@ -172,6 +173,8 @@ const CoachDashboard = () => {
       </div>
 
       <PlayerPageLocksCard />
+
+      <EventRegistrationsSummaryCard />
 
       {recentAthletes.length > 0 && (
         <Card>
