@@ -56,7 +56,7 @@ const RegistrationForm = ({ block, eventId }: { block: Extract<EventBlock, { typ
     setBusy(true);
     const { error } = await supabase.from("event_registrations").insert({ event_id: eventId, block_id: block.id, data });
     setBusy(false);
-    if (error) return toast.error("Não foi possível enviar a inscrição");
+    if (error) return toast.error("Não foi possível enviar a inscrição. Se o evento estiver escondido, torna-o visível para o público e guarda.");
     setSent(true);
   };
   if (sent) return <p className="rounded-lg border border-primary/40 bg-primary/10 p-4 text-sm">Inscrição enviada. Obrigado!</p>;
