@@ -131,7 +131,7 @@ const BlockView = ({ b, eventId, isCoach, slug, registration }: { b: EventBlock;
 const BlockEditor = ({ b, set }: { b: EventBlock; set: (b: EventBlock) => void }) => {
   switch (b.type) {
     case "text": return <div className="space-y-2"><Input value={b.title} onChange={(e) => set({ ...b, title: e.target.value })} placeholder="Título" /><Textarea rows={5} value={b.body} onChange={(e) => set({ ...b, body: e.target.value })} /></div>;
-    case "image": case "video": return <div className="space-y-2"><MediaPicker images={b.type === "image"} url={b.url} onChange={(url) => set({ ...b, url })} /><Input value={b.caption} placeholder="Legenda (opcional)" onChange={(e) => set({ ...b, caption: e.target.value })} />{b.url && <BlockView b={b} eventId="" isCoach={false} />}</div>;
+    case "image": case "video": return <div className="space-y-2"><MediaPicker images={b.type === "image"} url={b.url} onChange={(url) => set({ ...b, url })} /><Input value={b.caption} placeholder="Legenda (opcional)" onChange={(e) => set({ ...b, caption: e.target.value })} />{b.url && <BlockView b={b} eventId="" isCoach={false} slug="" />}</div>;
     case "form": {
       const upd = (i: number, p: Partial<FormField>) => set({ ...b, fields: b.fields.map((f, j) => j === i ? { ...f, ...p } : f) });
       return <div className="space-y-2">
