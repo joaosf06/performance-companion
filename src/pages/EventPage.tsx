@@ -14,6 +14,9 @@ import { uploadSiteAsset } from "@/lib/siteAssets";
 import { BLOCK_LABELS, newBlock, uid, videoEmbed, type EventBlock, type EventRow, type FormField } from "@/lib/events";
 import { ArrowDown, ArrowUp, ArrowLeft, Check, Download, Images, Pencil, Plus, Trash2, Upload, X } from "lucide-react";
 import { toast } from "sonner";
+import { Slider } from "@/components/ui/slider";
+import PageBackground from "@/components/site-editor/PageBackground";
+import { useEventCovers, type CoverSettings } from "@/hooks/useEventCovers";
 import { z } from "zod";
 
 const cell = "border border-border px-3 py-2 text-sm";
@@ -101,7 +104,7 @@ const Registrations = ({ eventId, blockId }: { eventId: string; blockId: string 
   );
 };
 
-const BlockView = ({ b, eventId, isCoach }: { b: EventBlock; eventId: string; isCoach: boolean }) => {
+const BlockView = ({ b, eventId, isCoach, slug, registration }: { b: EventBlock; eventId: string; isCoach: boolean; slug: string; registration?: boolean }) => {
   switch (b.type) {
     case "text": return <div><h2 className="font-display text-2xl font-bold">{b.title}</h2><p className="mt-3 whitespace-pre-wrap text-muted-foreground">{b.body}</p></div>;
     case "image": return b.url ? <figure><img src={b.url} alt={b.caption} className="w-full rounded-xl border border-border" loading="lazy" />{b.caption && <figcaption className="mt-2 text-sm text-muted-foreground">{b.caption}</figcaption>}</figure> : null;
@@ -110,7 +113,8 @@ const BlockView = ({ b, eventId, isCoach }: { b: EventBlock; eventId: string; is
       const embed = videoEmbed(b.url);
       return <figure>{embed ? <iframe src={embed} title={b.caption || "Vídeo"} className="aspect-video w-full rounded-xl" allowFullScreen /> : <video src={b.url} controls className="w-full rounded-xl" />}{b.caption && <figcaption className="mt-2 text-sm text-muted-foreground">{b.caption}</figcaption>}</figure>;
     }
-    case "form": return <div className="space-y-4 rounded-xl border border-border bg-card p-6"><h2 className="font-display text-2xl font-bold">{b.title}</h2><RegistrationForm block={b} eventId={eventId} />{isCoach && <Registrations eventId={eventId} blockId={b.id} />}</div>;
+    case "form": return registration ? <div className="space-y-4 rounded-xl border border-border bg-card p-6"><h2 className="font-display text-2xl font-bold">{b.title}</h2><RegistrationForm block={b} eventId={eventId} />{isCoach && <Registrations eventId={eventId} blockId={b.id} />}</div>
+      : <div className="flex flex-col items-center gap-4 rounded-xl border border-primary/40 bg-card/80 p-8 text-center backdrop-blur"><h2 className="font-display text-2xl font-bold">{b.title}</h2><Button asChild size="lg"><Link to={`/eventos/${slug}/inscricao?form=${b.id}`}>{b.button}</Link></Button>{isCoach && <Registrations eventId={eventId} blockId={b.id} />}</div>;
     case "table": return <div><h2 className="mb-3 font-display text-2xl font-bold">{b.title}</h2><div className="overflow-x-auto"><table className="w-full border-collapse"><thead><tr>{b.headers.map((h, i) => <th key={i} className={`${cell} bg-secondary text-left`}>{h}</th>)}</tr></thead><tbody>{b.rows.map((r, i) => <tr key={i}>{r.map((c, j) => <td key={j} className={cell}>{c}</td>)}</tr>)}</tbody></table></div></div>;
     case "scorers": return <div><h2 className="mb-3 font-display text-2xl font-bold">{b.title}</h2><table className="w-full border-collapse"><thead><tr><th className={`${cell} bg-secondary`}>#</th><th className={`${cell} bg-secondary text-left`}>Jogador</th><th className={`${cell} bg-secondary text-left`}>Equipa</th><th className={`${cell} bg-secondary`}>Golos</th></tr></thead>
       <tbody>{[...b.rows].sort((x, y) => y.goals - x.goals).map((r, i) => <tr key={i}><td className={`${cell} text-center font-bold ${i === 0 ? "text-primary" : ""}`}>{i + 1}</td><td className={cell}>{r.name}</td><td className={cell}>{r.team}</td><td className={`${cell} text-center font-bold`}>{r.goals}</td></tr>)}</tbody></table></div>;
@@ -165,7 +169,7 @@ const BlockEditor = ({ b, set }: { b: EventBlock; set: (b: EventBlock) => void }
   }
 };
 
-const EventPage = () => {
+const EventPage = ({ registration = false }: { registration?: boolean }) => {
   const { slug } = useParams();
   const [params] = useSearchParams();
   const navigate = useNavigate();
@@ -175,7 +179,9 @@ const EventPage = () => {
   const [draft, setDraft] = useState<EventRow | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const editing = !!draft;
+  const covers = useEventCovers();
+  const [coverDraft, setCoverDraft] = useState<CoverSettings | null>(null);
+  const editing = !!draft && !registration;
 
   useEffect(() => {
     supabase.from("events").select("*").eq("slug", slug ?? "").maybeSingle().then(({ data }) => {
@@ -192,13 +198,15 @@ const EventPage = () => {
     const { error } = await supabase.from("events").update({ title: draft.title, subtitle: draft.subtitle, cover_url: draft.cover_url, published: draft.published, blocks: draft.blocks as unknown as Json, updated_at: new Date().toISOString() }).eq("id", draft.id);
     setSaving(false);
     if (error) return toast.error("Não foi possível guardar");
+    if (coverDraft) { try { await covers.save(draft.id, coverDraft); } catch { toast.error("Não foi possível guardar a capa"); } }
+    setCoverDraft(null);
     setEv(draft); setDraft(null); toast.success("Evento guardado");
   };
 
   const remove = async () => {
     if (!ev || !confirm("Apagar este evento e todas as inscrições?")) return;
     await supabase.from("events").delete().eq("id", ev.id);
-    navigate("/#eventos");
+    navigate("/eventos");
   };
 
   if (loading) return <div className="flex min-h-screen items-center justify-center bg-background"><div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" /></div>;
@@ -208,41 +216,55 @@ const EventPage = () => {
   const setBlocks = (blocks: EventBlock[]) => setDraft({ ...cur, blocks });
   const move = (i: number, d: number) => { const b = [...cur.blocks]; const j = i + d; if (j < 0 || j >= b.length) return; [b[i], b[j]] = [b[j], b[i]]; setBlocks(b); };
 
+  const cover = coverDraft ?? covers.get(cur.id);
+  const setCover = (p: Partial<CoverSettings>) => setCoverDraft({ ...cover, ...p });
+  const formId = params.get("form");
+  const shown = registration ? cur.blocks.filter((b) => b.type === "form" && (!formId || b.id === formId)) : cur.blocks;
+
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <header className="flex items-center justify-between border-b border-border/50 px-6 py-4">
+    <div className="relative min-h-screen bg-background text-foreground">
+      <PageBackground pageKey={`evento-${slug}`} label="Evento" />
+      <header className="relative z-10 flex items-center justify-between border-b border-border/50 px-6 py-4">
         <Link to="/"><SiteLogo className="h-10 w-auto" /></Link>
-        <Link to="/#eventos" className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"><ArrowLeft className="h-4 w-4" />Página inicial</Link>
+        <Link to={registration ? `/eventos/${slug}` : "/eventos"} className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"><ArrowLeft className="h-4 w-4" />{registration ? "Voltar ao evento" : "Todos os eventos"}</Link>
       </header>
 
-      <div className="relative">
-        {cur.cover_url && <img src={cur.cover_url} alt="" className="absolute inset-0 h-full w-full object-cover opacity-30" />}
-        <div className="relative mx-auto max-w-4xl px-6 py-20 text-center">
+      <div className="relative flex items-end overflow-hidden" style={{ minHeight: registration ? undefined : `${cover.height}vh` }}>
+        {cur.cover_url && !registration && <>
+          <img src={cur.cover_url} alt="" className="absolute inset-0 h-full w-full object-cover" style={{ objectPosition: `${cover.x}% ${cover.y}%`, transform: `scale(${cover.zoom / 100})`, transformOrigin: `${cover.x}% ${cover.y}%` }} />
+          <div className="absolute inset-0 bg-background" style={{ opacity: cover.overlay / 100 }} />
+        </>}
+        <div className="relative mx-auto w-full max-w-4xl px-6 py-20 text-center">
           {editing ? (
             <div className="space-y-3 text-left">
               <Input value={cur.title} onChange={(e) => setDraft({ ...cur, title: e.target.value })} className="text-2xl font-bold" />
               <Textarea value={cur.subtitle ?? ""} placeholder="Descrição curta" onChange={(e) => setDraft({ ...cur, subtitle: e.target.value })} />
               <Label>Foto de capa</Label>
               <MediaPicker images url={cur.cover_url ?? ""} onChange={(u) => setDraft({ ...cur, cover_url: u || null })} />
+              {cur.cover_url && <div className="grid gap-3 rounded-lg border border-border bg-background/90 p-3 sm:grid-cols-2">
+                {([["height", "Altura da capa", 20, 100, "% do ecrã"], ["overlay", "Escurecimento", 0, 95, "%"], ["x", "Horizontal", 0, 100, "%"], ["y", "Vertical", 0, 100, "%"], ["zoom", "Zoom", 100, 250, "%"]] as const).map(([k, l, min, max, u]) => (
+                  <div key={k}><p className="mb-1 text-xs text-muted-foreground">{l} {cover[k]}{u}</p>
+                    <Slider value={[cover[k]]} min={min} max={max} step={1} onValueChange={([v]) => setCover({ [k]: v })} /></div>))}
+              </div>}
               <label className="flex items-center gap-2 text-sm"><Switch checked={cur.published} onCheckedChange={(v) => setDraft({ ...cur, published: v })} />Visível para o público</label>
             </div>
           ) : (<>
-            <h1 className="font-display text-4xl font-bold md:text-6xl">{cur.title}</h1>
-            {cur.subtitle && <p className="mx-auto mt-4 max-w-2xl whitespace-pre-wrap text-lg text-muted-foreground">{cur.subtitle}</p>}
+            <h1 className="font-display text-4xl font-bold md:text-6xl">{registration ? `Inscrição — ${cur.title}` : cur.title}</h1>
+            {!registration && cur.subtitle && <p className="mx-auto mt-4 max-w-2xl whitespace-pre-wrap text-lg text-muted-foreground">{cur.subtitle}</p>}
             {isCoach && !cur.published && <p className="mt-4 text-sm text-primary">Este evento está escondido do público.</p>}
           </>)}
         </div>
       </div>
 
-      <main className="mx-auto max-w-4xl space-y-12 px-6 pb-32">
-        {cur.blocks.map((b, i) => editing ? (
+      <main className="relative z-10 mx-auto max-w-4xl space-y-12 px-6 pb-32">
+        {(editing ? cur.blocks : shown).map((b, i) => editing ? (
           <div key={b.id} className="space-y-3 rounded-xl border border-dashed border-primary/50 p-4">
             <div className="flex items-center justify-between"><span className="text-xs font-semibold uppercase text-primary">{BLOCK_LABELS[b.type]}</span>
               <div className="flex gap-1"><Button size="icon" variant="ghost" onClick={() => move(i, -1)}><ArrowUp className="h-4 w-4" /></Button><Button size="icon" variant="ghost" onClick={() => move(i, 1)}><ArrowDown className="h-4 w-4" /></Button>
                 <Button size="icon" variant="ghost" onClick={() => setBlocks(cur.blocks.filter((x) => x.id !== b.id))}><Trash2 className="h-4 w-4 text-destructive" /></Button></div></div>
             <BlockEditor b={b} set={(nb) => setBlocks(cur.blocks.map((x) => x.id === b.id ? nb : x))} />
           </div>
-        ) : <BlockView key={b.id} b={b} eventId={ev.id} isCoach={isCoach} />)}
+        ) : <BlockView key={b.id} b={b} eventId={ev.id} isCoach={isCoach} slug={ev.slug} registration={registration} />)}
 
         {editing && (
           <div className="rounded-xl border border-border bg-card p-4">
@@ -253,11 +275,12 @@ const EventPage = () => {
         )}
       </main>
 
-      {isCoach && (
+      {registration && shown.length === 0 && <main className="relative z-10 mx-auto max-w-4xl px-6 pb-32 text-center text-muted-foreground">Este evento ainda não tem inscrições abertas.</main>}
+      {isCoach && !registration && (
         <div className="fixed bottom-4 left-1/2 z-[60] flex -translate-x-1/2 gap-2 rounded-full border border-border bg-background/95 px-3 py-2 shadow-xl backdrop-blur">
           {editing ? (<>
             <Button size="sm" variant="ghost" className="text-destructive" onClick={remove}><Trash2 className="mr-1 h-4 w-4" />Apagar evento</Button>
-            <Button size="sm" variant="ghost" onClick={() => setDraft(null)} disabled={saving}><X className="mr-1 h-4 w-4" />Cancelar</Button>
+            <Button size="sm" variant="ghost" onClick={() => { setDraft(null); setCoverDraft(null); }} disabled={saving}><X className="mr-1 h-4 w-4" />Cancelar</Button>
             <Button size="sm" onClick={save} disabled={saving}><Check className="mr-1 h-4 w-4" />{saving ? "A guardar..." : "Guardar"}</Button>
           </>) : <Button size="sm" variant="outline" onClick={() => setDraft(ev)}><Pencil className="mr-1 h-4 w-4" />Editar evento</Button>}
         </div>
