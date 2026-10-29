@@ -3,59 +3,72 @@ import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
-import { CalendarDays, Plus, EyeOff } from "lucide-react";
+import { ArrowRight, CalendarDays, Plus, EyeOff } from "lucide-react";
 import { toast } from "sonner";
+import { useEventCovers } from "@/hooks/useEventCovers";
 
-type Ev = { id: string; slug: string; title: string; subtitle: string | null; cover_url: string | null; published: boolean };
+export type Ev = { id: string; slug: string; title: string; subtitle: string | null; cover_url: string | null; published: boolean };
 
-const EventsSection = () => {
+export const useEventsList = () => {
   const { role } = useAuth();
-  const isCoach = role === "coach";
-  const navigate = useNavigate();
-  const [events, setEvents] = useState<Ev[]>([]);
-
+  const [events, setEvents] = useState<Ev[] | null>(null);
   useEffect(() => {
     supabase.from("events").select("id,slug,title,subtitle,cover_url,published").order("created_at", { ascending: false })
       .then(({ data }) => setEvents((data as Ev[]) ?? []));
   }, [role]);
+  return events;
+};
 
-  const create = async () => {
+export const useCreateEvent = () => {
+  const navigate = useNavigate();
+  return async () => {
     const slug = `evento-${Date.now().toString(36)}`;
     const { error } = await supabase.from("events").insert({ slug, title: "Novo evento" });
     if (error) return toast.error("Não foi possível criar o evento");
     navigate(`/eventos/${slug}?edit=1`);
   };
+};
+
+const EventsSection = () => {
+  const { role } = useAuth();
+  const isCoach = role === "coach";
+  const events = useEventsList() ?? [];
+  const create = useCreateEvent();
+  const covers = useEventCovers();
 
   if (!isCoach && events.length === 0) return null;
+  const [main, ...rest] = events;
+  const mc = main ? covers.get(main.id) : null;
 
   return (
-    <section id="eventos" className="border-t border-border/50 py-24 px-6">
-      <div className="mx-auto max-w-6xl">
-        <div className="mb-10 flex flex-wrap items-end justify-between gap-4">
-          <div>
+    <section id="eventos" className="border-t border-border/50">
+      {main ? (
+        <Link to={`/eventos/${main.slug}`} className="group relative block min-h-[80vh] overflow-hidden">
+          {main.cover_url ? (
+            <img src={main.cover_url} alt={main.title} className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+              style={{ objectPosition: `${mc!.x}% ${mc!.y}%` }} />
+          ) : <div className="absolute inset-0 bg-muted" />}
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-background/10" />
+          <div className="relative mx-auto flex min-h-[80vh] max-w-6xl flex-col justify-end px-6 py-16">
             <p className="text-sm font-semibold uppercase tracking-widest text-primary">Eventos</p>
-            <h2 className="mt-2 font-display text-3xl font-bold md:text-4xl">Torneios e eventos</h2>
+            {!main.published && <span className="mt-2 inline-flex items-center gap-1 text-xs text-muted-foreground"><EyeOff className="h-3 w-3" /> Escondido</span>}
+            <h2 className="mt-3 max-w-3xl font-display text-4xl font-bold md:text-7xl">{main.title}</h2>
+            {main.subtitle && <p className="mt-4 max-w-2xl text-lg text-muted-foreground line-clamp-3">{main.subtitle}</p>}
+            <span className="mt-8 inline-flex w-fit items-center gap-2 rounded-md bg-primary px-6 py-3 font-semibold text-primary-foreground">Ver evento <ArrowRight className="h-4 w-4" /></span>
           </div>
-          {isCoach && <Button onClick={create} className="gap-2"><Plus className="h-4 w-4" /> Criar evento</Button>}
+        </Link>
+      ) : (
+        <div className="flex min-h-[50vh] flex-col items-center justify-center gap-4 px-6 text-center">
+          <CalendarDays className="h-12 w-12 text-muted-foreground" />
+          <p className="text-muted-foreground">Ainda não há eventos.</p>
         </div>
-        {events.length === 0 ? (
-          <p className="text-muted-foreground">Ainda não há eventos. Carrega em "Criar evento".</p>
-        ) : (
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {events.map((e) => (
-              <Link key={e.id} to={`/eventos/${e.slug}`} className="group overflow-hidden rounded-xl border border-border bg-card transition-colors hover:border-primary">
-                <div className="flex aspect-video items-center justify-center bg-muted">
-                  {e.cover_url ? <img src={e.cover_url} alt={e.title} className="h-full w-full object-cover" loading="lazy" /> : <CalendarDays className="h-10 w-10 text-muted-foreground" />}
-                </div>
-                <div className="p-5">
-                  {!e.published && <span className="mb-2 inline-flex items-center gap-1 text-xs text-muted-foreground"><EyeOff className="h-3 w-3" /> Escondido</span>}
-                  <h3 className="font-display text-xl font-semibold group-hover:text-primary">{e.title}</h3>
-                  {e.subtitle && <p className="mt-1 text-sm text-muted-foreground line-clamp-2">{e.subtitle}</p>}
-                </div>
-              </Link>
-            ))}
-          </div>
-        )}
+      )}
+      <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-6 py-8">
+        <p className="text-muted-foreground">{rest.length > 0 ? `+${rest.length} ${rest.length === 1 ? "outro evento" : "outros eventos"}` : "Torneios e eventos Prime11"}</p>
+        <div className="flex gap-2">
+          {isCoach && <Button variant="outline" onClick={create} className="gap-2"><Plus className="h-4 w-4" /> Criar evento</Button>}
+          <Button asChild className="gap-2"><Link to="/eventos">Ver todos os eventos <ArrowRight className="h-4 w-4" /></Link></Button>
+        </div>
       </div>
     </section>
   );

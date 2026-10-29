@@ -122,6 +122,7 @@ const Index = () => {
             <a href="#sobre" className="hidden text-sm text-muted-foreground hover:text-foreground transition-colors sm:inline-block">Sobre</a>
             <a href="#servicos" className="hidden text-sm text-muted-foreground hover:text-foreground transition-colors sm:inline-block">Serviços</a>
             <a href="#equipa" className="hidden text-sm text-muted-foreground hover:text-foreground transition-colors sm:inline-block">Equipa</a>
+            <Link to="/eventos" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Eventos</Link>
             {user ? (
               <Link to="/dashboard">
                 <Button size="sm">Dashboard</Button>
