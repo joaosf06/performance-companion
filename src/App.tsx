@@ -24,6 +24,7 @@ const Settings = lazy(() => import("./pages/Settings"));
 const Bookings = lazy(() => import("./pages/Bookings"));
 const AthleteDatabase = lazy(() => import("./pages/AthleteDatabase"));
 const EventPage = lazy(() => import("./pages/EventPage"));
+const EventsList = lazy(() => import("./pages/EventsList"));
 
 const queryClient = new QueryClient();
 
@@ -69,7 +70,9 @@ const App = () => (
                 <Route path="/database" element={<AthleteDatabase />} />
               </Route>
               <Route path="/treino-gratis" element={<FreeTrial />} />
+              <Route path="/eventos" element={<EventsList />} />
               <Route path="/eventos/:slug" element={<EventPage />} />
+              <Route path="/eventos/:slug/inscricao" element={<EventPage registration />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </Suspense>
