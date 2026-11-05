@@ -29,6 +29,13 @@
       "when": 1793092494443,
       "tag": "0003_create_events",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1793877644020,
+      "tag": "0004_restrict_user_roles_insert_to_coaches",
+      "breakpoints": true
     }
   ]
 }
