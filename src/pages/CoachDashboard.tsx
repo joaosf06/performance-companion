@@ -12,6 +12,7 @@ import { Link } from "react-router-dom";
 import { format, startOfWeek } from "date-fns";
 import { toast } from "sonner";
 import PlayerPageLocksCard from "@/components/PlayerPageLocksCard";
+import FreeTrialRequestsCard from "@/components/FreeTrialRequestsCard";
 import EventRegistrationsSummaryCard from "@/components/EventRegistrationsSummaryCard";
 
 const CoachDashboard = () => {
@@ -171,6 +172,8 @@ const CoachDashboard = () => {
           </CardContent>
         </Card>
       </div>
+
+      <FreeTrialRequestsCard />
 
       <PlayerPageLocksCard />
 

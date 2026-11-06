@@ -69,7 +69,14 @@ const FreeTrial = () => {
     preferred_foot: "",
     availability: "",
     notes: "",
+    guardian_name: "",
+    guardian_phone: "",
+    guardian_email: "",
+    website: "",
   });
+  const [consent, setConsent] = useState(false);
+  const isMinor = form.age !== "" && parseInt(form.age) < 18;
+  const phoneOk = (v: string) => /^\+?[0-9][0-9 ()-]{7,18}[0-9]$/.test(v.trim());
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -85,6 +92,24 @@ const FreeTrial = () => {
       return;
     }
 
+    if (form.phone.trim() && !phoneOk(form.phone)) {
+      toast({ title: "Telemóvel inválido.", variant: "destructive" });
+      return;
+    }
+    if (isMinor && (form.guardian_name.trim().length < 2 || !phoneOk(form.guardian_phone) || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(form.guardian_email.trim()))) {
+      toast({ title: "Preenche os dados do encarregado de educação.", variant: "destructive" });
+      return;
+    }
+    if (!consent) {
+      toast({ title: "Tens de aceitar o tratamento dos dados.", variant: "destructive" });
+      return;
+    }
+    // Honeypot: bots fill hidden field; silently pretend success.
+    if (form.website) {
+      setSubmitted(true);
+      return;
+    }
+
     setLoading(true);
     const { error } = await supabase.from("free_trial_requests").insert({
       full_name: form.full_name.trim(),
@@ -97,9 +122,18 @@ const FreeTrial = () => {
       preferred_foot: form.preferred_foot,
       availability: form.availability,
       notes: form.notes.trim() || null,
+      guardian_name: isMinor ? form.guardian_name.trim() : null,
+      guardian_phone: isMinor ? form.guardian_phone.trim() : null,
+      guardian_email: isMinor ? form.guardian_email.trim() : null,
+      consent_accepted_at: new Date().toISOString(),
+      consent_version: "v1",
     });
     setLoading(false);
 
+    if (error?.message?.includes("RATE_LIMIT")) {
+      toast({ title: "Já recebemos os teus pedidos.", description: "Só podes enviar 3 pedidos por dia com o mesmo email. Entraremos em contacto em breve!" });
+      return;
+    }
     if (error) {
       toast({ title: "Erro ao enviar. Tenta novamente.", variant: "destructive" });
       return;
@@ -233,6 +267,36 @@ const FreeTrial = () => {
                   <Label htmlFor="notes">Observações</Label>
                   <Textarea id="notes" value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} placeholder="Algo que queiras partilhar..." maxLength={500} rows={3} />
                 </div>
+
+                {isMinor && (
+                  <div className="space-y-4 rounded-md border border-border/50 p-4">
+                    <p className="text-sm font-medium">Encarregado de educação (atleta menor de 18 anos)</p>
+                    <div className="space-y-2">
+                      <Label htmlFor="guardian_name">Nome do encarregado *</Label>
+                      <Input id="guardian_name" value={form.guardian_name} onChange={(e) => setForm({ ...form, guardian_name: e.target.value })} maxLength={100} />
+                    </div>
+                    <div className="grid gap-4 sm:grid-cols-2">
+                      <div className="space-y-2">
+                        <Label htmlFor="guardian_phone">Telemóvel do encarregado *</Label>
+                        <Input id="guardian_phone" value={form.guardian_phone} onChange={(e) => setForm({ ...form, guardian_phone: e.target.value })} maxLength={20} />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="guardian_email">Email do encarregado *</Label>
+                        <Input id="guardian_email" type="email" value={form.guardian_email} onChange={(e) => setForm({ ...form, guardian_email: e.target.value })} maxLength={255} />
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                <div aria-hidden="true" className="absolute -left-[9999px] h-0 w-0 overflow-hidden">
+                  <label htmlFor="website">Website</label>
+                  <input id="website" name="website" tabIndex={-1} autoComplete="off" value={form.website} onChange={(e) => setForm({ ...form, website: e.target.value })} />
+                </div>
+
+                <label className="flex items-start gap-3 text-sm text-muted-foreground">
+                  <input type="checkbox" className="mt-1 h-4 w-4 accent-primary" checked={consent} onChange={(e) => setConsent(e.target.checked)} />
+                  <span>Li e aceito a política de privacidade e autorizo o tratamento dos dados para contacto sobre o treino grátis. Se o atleta for menor, declaro ser o encarregado de educação ou ter a sua autorização. *</span>
+                </label>
 
                 <Button type="submit" className="w-full" size="lg" disabled={loading}>
                   {loading ? "A enviar..." : "Agendar treino grátis"}

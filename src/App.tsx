@@ -42,6 +42,7 @@ const Workouts = lazy(() => import("./pages/Workouts"));
 const Settings = lazy(() => import("./pages/Settings"));
 const Bookings = lazy(() => import("./pages/Bookings"));
 const AthleteDatabase = lazy(() => import("./pages/AthleteDatabase"));
+const FreeTrialRequests = lazy(() => import("./pages/FreeTrialRequests"));
 const EventPage = lazy(() => import("./pages/EventPage"));
 const EventsList = lazy(() => import("./pages/EventsList"));
 
@@ -87,6 +88,7 @@ const App = () => (
                 <Route path="/settings" element={<Settings />} />
                 <Route path="/bookings" element={<Bookings />} />
                 <Route path="/database" element={<AthleteDatabase />} />
+                <Route path="/pedidos" element={<FreeTrialRequests />} />
               </Route>
               <Route path="/treino-gratis" element={<FreeTrial />} />
               <Route path="/eventos" element={<EventsList />} />

@@ -570,43 +570,67 @@ export type Database = {
           age: number
           availability: string
           club: string
+          coach_notes: string | null
+          consent_accepted_at: string | null
+          consent_version: string | null
           created_at: string
           email: string
           full_name: string
+          guardian_email: string | null
+          guardian_name: string | null
+          guardian_phone: string | null
           id: string
+          last_contacted_at: string | null
           level: string
           notes: string | null
           phone: string | null
           position: string
           preferred_foot: string
+          status: string
         }
         Insert: {
           age: number
           availability: string
           club: string
+          coach_notes?: string | null
+          consent_accepted_at?: string | null
+          consent_version?: string | null
           created_at?: string
           email: string
           full_name: string
+          guardian_email?: string | null
+          guardian_name?: string | null
+          guardian_phone?: string | null
           id?: string
+          last_contacted_at?: string | null
           level: string
           notes?: string | null
           phone?: string | null
           position: string
           preferred_foot: string
+          status?: string
         }
         Update: {
           age?: number
           availability?: string
           club?: string
+          coach_notes?: string | null
+          consent_accepted_at?: string | null
+          consent_version?: string | null
           created_at?: string
           email?: string
           full_name?: string
+          guardian_email?: string | null
+          guardian_name?: string | null
+          guardian_phone?: string | null
           id?: string
+          last_contacted_at?: string | null
           level?: string
           notes?: string | null
           phone?: string | null
           position?: string
           preferred_foot?: string
+          status?: string
         }
         Relationships: []
       }

@@ -36,6 +36,20 @@
       "when": 1793877644020,
       "tag": "0004_restrict_user_roles_insert_to_coaches",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1794006561621,
+      "tag": "0005_free_trial_requests_management",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1794006572154,
+      "tag": "0006_free_trial_guardian_consent",
+      "breakpoints": true
     }
   ]
 }
