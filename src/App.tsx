@@ -1,4 +1,23 @@
-import { lazy, Suspense } from "react";
+import { lazy as reactLazy, Suspense, ComponentType } from "react";
+
+// Recover from stale chunks after a new deploy: reload once, then surface the error.
+const lazy = <T extends ComponentType<any>>(factory: () => Promise<{ default: T }>) =>
+  reactLazy(async () => {
+    const key = "chunk-reload-attempted";
+    try {
+      const mod = await factory();
+      sessionStorage.removeItem(key);
+      return mod;
+    } catch (err) {
+      if (!sessionStorage.getItem(key)) {
+        sessionStorage.setItem(key, "1");
+        window.location.reload();
+        return new Promise<{ default: T }>(() => {});
+      }
+      sessionStorage.removeItem(key);
+      throw err;
+    }
+  });
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
